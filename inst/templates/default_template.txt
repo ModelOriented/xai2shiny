@@ -1,0 +1,249 @@
+library(shiny)
+library(shinyjs)
+library(shinydashboard)
+library(shinycssloaders)
+library(shinyWidgets)
+library(DALEX)
+library(ggplot2)
+
+{{{explainers_static}}}
+
+data <- explainer1$data
+
+chosen_observation <- data[1,-8]
+
+dropdownActionMenu <- function (..., title=NULL, icon = NULL, .list = NULL, header=NULL) {
+  items <- c(list(...), .list)
+  lapply(items, shinydashboard:::tagAssert, type = "li")
+  type <- "notifications"
+  dropdownClass <- paste0("dropdown ", type, "-menu")
+  tags$li(class = dropdownClass, a(href = "#", class = "dropdown-toggle",
+                                   `data-toggle` = "dropdown", icon, title), tags$ul(class = "dropdown-menu",
+                                                                                     if(!is.null(header)) tags$li(class="header",header),
+                                                                                     tags$li(tags$ul(class = "menu", items))))
+}
+
+
+ui <- dashboardPage(
+    skin = "purple",
+    dashboardHeader(title = strong("shimex"),
+                    dropdownActionMenu(title="Chosen explainer",
+                                       icon = icon("arrow-circle-down")
+                                       {{{buttons}}}
+                    )
+                    ),
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem(p(id = "menu1", "Model exploration"),
+                tabName = "dashboard", icon = icon("arrow-circle-right")),
+            checkboxGroupButtons(
+              inputId = "selected_explanations", label = "Select explanation types",
+              choices = c("Local", "Global"),
+              selected = "Local",
+              justified = TRUE, status = "primary",
+              checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon"))
+            ),
+            tags$script("$(\"input:checkbox[name='selected_explanations'][value='Local']\").parent().css('background-color', '#483D8B');"),
+            tags$script("$(\"input:checkbox[name='selected_explanations'][value='Global']\").parent().css('background-color', '#1958a6');"),
+            selectInput(
+                inputId = 'selected_columns',
+                label = 'Select variables',
+                choices = {{{cols}}},
+                selected = {{{selected_variables}}},
+                multiple = T
+            ),
+            tags$hr(),
+            uiOutput('vars_input'),
+            width = 3,
+            menuItem(p(id = "menu2", "Learn more about XAI"), tabName = "widgets", icon = icon("th"))
+            # tags$style(type="text/css",
+            #            ".shiny-output-error { visibility: hidden; }",
+            #            ".shiny-output-error:before { visibility: hidden; }"
+            # )
+        )
+    ),
+    dashboardBody(
+        shinyjs::useShinyjs(),
+        tabItems(
+            tabItem(tabName = "dashboard",
+                    fluidRow(
+                        column(width = 4,
+                               column(width = 12,
+                                    box(title = p(id = "tab1", "Prediction"),
+                                        background = "purple", solidHeader = TRUE,
+                                        collapsible = TRUE, width = 800,
+                                        height = 100,
+                                        withSpinner(uiOutput("textPred"),hide.ui = FALSE)),
+                                    box(title = p(id = "tab2", "Model Performance"),
+                                        background = "blue", solidHeader = TRUE,
+                                        collapsible = TRUE, width = 800,
+                                        height = 430,
+                                        withSpinner(plotOutput("modelPerf", height = 360),hide.ui = FALSE))
+                                    )),
+                        div(id = "local",
+                          box(title = p(id = "tab3", "Predict Parts"),
+                              background = "purple", solidHeader = TRUE,
+                              collapsible = TRUE, width = 4,
+                              height = 550,
+                              selectInput(inputId = "pptype",
+                                          label = 'Type of variable attributions:',
+                                          choices = c("SHAP" = "shap", "Break Down" = "break_down"),
+                                          selected = "break_down"),
+                              withSpinner(plotOutput("bdPlot", height = 400),hide.ui = FALSE)),
+                          box(title = p(id = "tab4", "Predict Profile"),
+                              background = "purple", solidHeader = TRUE,
+                              collapsible = TRUE, width = 4,
+                              height = 550,
+                              uiOutput("cpvariable"),
+                              withSpinner(plotOutput("cpPlot", height = 400),hide.ui = FALSE)),
+                    )),
+                    fluidRow(
+                        hidden(
+                          div(id = "global",
+                            box(title = p(id = "tab5", "Model Parts"),
+                                background = "blue", solidHeader = TRUE,
+                                collapsible = TRUE, width = 6,
+                                height = 350,
+                                withSpinner(plotOutput("fiPlot", height = 260), hide.ui = FALSE)),
+                            box(title = p(id = "tab6", "Model Profile"),
+                                background = "blue", solidHeader = TRUE,
+                                collapsible = TRUE, width = 6,
+                                height = 350,
+                                column(width = 3, uiOutput("pdpvariable"),),
+                                column(width = 9, withSpinner(plotOutput("pdpPlot", height = 260), hide.ui = FALSE)))
+                    )))
+
+            ),
+            tabItem(tabName = "widgets",
+                    p(id = "widget1", "Learn more about XAI"),
+                    p(id = "widget2", "TODO")
+            )
+        )
+
+    )
+)
+
+
+
+server <- function(input, output, session) {
+
+
+    new_observation <- reactive({
+      obs <- {{{obs}}}
+      nulls <- sapply(obs, function(x) length(x) == 0)
+      obs[nulls] <- as.list(chosen_observation)[nulls]
+      as.data.frame(obs)
+    })
+
+    exp <- reactiveValues(data = explainer1)
+    {{{explainers_reactive}}}
+
+    pred <- reactive({
+        predict(exp$data, new_observation())
+    })
+
+    output$textPred <- renderUI({
+        strong(paste0(pred()))
+    })
+
+    pp <- reactive({
+        predict_parts(exp$data, new_observation(), type = input$pptype)
+    })
+
+    cp <- reactive({
+        predict_profile(exp$data, new_observation(), input$cp1)
+    })
+
+    # plot
+    output$bdPlot <- renderPlot({
+        plot(pp())
+    })
+
+    output$cpPlot <- renderPlot({
+        plot(cp(), variables = input$cp1)
+    })
+
+    output$modelPerf <- renderPlot({
+        perf <- model_performance(exp$data)
+        plot(perf, geom = "roc")
+    })
+
+    output$fiPlot <- renderPlot({
+        mp <- model_parts(exp$data)
+        plot(mp)
+    })
+
+    output$pdpPlot <- renderPlot({
+        pdp <- model_profile(exp$data, variables = input$pdp1)
+        plot(pdp)
+    })
+
+    output$cpvariable <- renderUI({
+        selectInput(inputId = "cp1",
+                    label = "The profiles will be calculated for:",
+                    choices = input$selected_columns,
+                    selected = input$selected_columns[1])
+    })
+
+    output$pdpvariable <- renderUI({
+      selectInput(inputId = "pdp1",
+                  label = "The profiles will be calculated for:",
+                  choices = input$selected_columns,
+                  selected = input$selected_columns[1])
+    })
+
+
+    observeEvent(input$selected_explanations, {
+        if (is.null(input$selected_explanations) ){
+          hide("local")
+          hide("global")
+        }
+
+        if (length(input$selected_explanations) ==1){
+          if (input$selected_explanations == "Local"){
+            show("local")
+            hide("global")
+          } else if (input$selected_explanations == "Global"){
+            hide("local")
+            show("global")
+          }
+        } else{
+          show("local")
+          show("global")
+        }
+    })
+
+
+    output$vars_input <- renderUI({
+
+        selected_columns <- input$selected_columns
+
+        lapply(1:length(selected_columns), function(i){
+          var_values <- data[, colnames(data) == selected_columns[i]]
+          if(class(var_values) == 'factor'){
+            selectInput(inputId = selected_columns[i],
+
+                        label = selected_columns[i],
+
+                        choices = levels(var_values),
+
+                        selected = chosen_observation[[selected_columns[i]]])}
+
+          else{
+            sliderInput(inputId = selected_columns[i],
+
+                        label = selected_columns[i],
+
+                        min = round(min(var_values, na.rm = T)),
+
+                        max = round(max(var_values, na.rm = T)),
+
+                        value = chosen_observation[[selected_columns[i]]])
+
+          }
+        })
+  })
+
+}
+
+shinyApp(ui = ui, server = server)
