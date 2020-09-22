@@ -52,14 +52,18 @@ ui <- dashboardPage(
                 selected = {{{selected_variables}}},
                 multiple = T
             ),
+            prettyCheckbox(
+              inputId = "text_yesno", label = "Show text description",
+              status = "primary"
+            ),
             tags$hr(),
             uiOutput('vars_input'),
             width = 3,
-            menuItem(p(id = "menu2", "Learn more about XAI"), tabName = "widgets", icon = icon("th"))
-            # tags$style(type="text/css",
-            #            ".shiny-output-error { visibility: hidden; }",
-            #            ".shiny-output-error:before { visibility: hidden; }"
-            # )
+            menuItem(p(id = "menu2", "Learn more about XAI"), tabName = "widgets", icon = icon("th")),
+            tags$style(type="text/css",
+                       ".shiny-output-error { visibility: hidden; }",
+                       ".shiny-output-error:before { visibility: hidden; }"
+            )
         )
     ),
     dashboardBody(
@@ -77,25 +81,28 @@ ui <- dashboardPage(
                                     box(title = p(id = "tab2", "Model Performance"),
                                         background = "blue", solidHeader = TRUE,
                                         collapsible = TRUE, width = 800,
-                                        height = 430,
-                                        withSpinner(plotOutput("modelPerf", height = 360),hide.ui = FALSE))
+                                        height = NULL,
+                                        withSpinner(plotOutput("modelPerf", height = 360),hide.ui = FALSE),
+                                        htmlOutput("textid3"))
                                     )),
                         div(id = "local",
                           box(title = p(id = "tab3", "Predict Parts"),
                               background = "purple", solidHeader = TRUE,
                               collapsible = TRUE, width = 4,
-                              height = 550,
+                              height = NULL,
                               selectInput(inputId = "pptype",
                                           label = 'Type of variable attributions:',
                                           choices = c("SHAP" = "shap", "Break Down" = "break_down"),
                                           selected = "break_down"),
-                              withSpinner(plotOutput("bdPlot", height = 400),hide.ui = FALSE)),
+                              withSpinner(plotOutput("bdPlot", height = 400),hide.ui = FALSE),
+                              textOutput("textid1")),
                           box(title = p(id = "tab4", "Predict Profile"),
                               background = "purple", solidHeader = TRUE,
                               collapsible = TRUE, width = 4,
-                              height = 550,
+                              height = NULL,
                               uiOutput("cpvariable"),
-                              withSpinner(plotOutput("cpPlot", height = 400),hide.ui = FALSE)),
+                              withSpinner(plotOutput("cpPlot", height = 400),hide.ui = FALSE),
+                              textOutput("textid2"))
                     )),
                     fluidRow(
                         hidden(
@@ -141,6 +148,33 @@ server <- function(input, output, session) {
     pred <- reactive({
         predict(exp$data, new_observation())
     })
+
+    output$textid1 <- renderText({
+      if(input$text_yesno) iBreakDown::describe(pp())
+      else ""
+
+    })
+
+    output$textid2 <- renderText({
+      if(input$text_yesno) ingredients::describe(cp())
+      else ""
+    })
+
+    output$textid3 <- renderText({
+      if(input$text_yesno){
+          perf <- model_performance(exp$data)
+          if(perf$type == "regression"){
+              paste0("Performance measures for ", perf$type, ":<br>","MSE: ", round(perf$measures$mse,3),"<br>", "RMSE: ", round(perf$measures$rmse,3), "<br>",
+                  "R2: ", round(perf$measures$r2,3),"<br>", "MAD: ", round(perf$measures$mad,3))
+          }
+          else{
+              paste0("Performance measures for ", perf$type, ":<br>","Recall: ", round(perf$measures$recall,3),"<br>", "Precision: ", round(perf$measures$precision,3), "<br>",
+                     "F1: ", round(perf$measures$f1,3),"<br>", "Accuracy: ", round(perf$measures$accuracy,3))
+          }
+      }
+      else ""
+    })
+
 
     output$textPred <- renderUI({
         strong(paste0(pred()))
