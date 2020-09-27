@@ -6,6 +6,8 @@ library(shinyWidgets)
 library(DALEX)
 library(ggplot2)
 
+{{{libs}}}
+
 {{{explainers_static}}}
 
 data <- explainer1$data

@@ -19,3 +19,6 @@ Imports:
     shinycssloaders,
     whisker,
     readr
+Suggests: 
+    testthat,
+    ranger

@@ -4,7 +4,7 @@
 \alias{xai2shiny}
 \title{Create shiny app from an explainer}
 \usage{
-xai2shiny(..., directory = NULL, selected_variables = NULL)
+xai2shiny(..., directory = NULL, selected_variables = NULL, run = TRUE)
 }
 \arguments{
 \item{...}{one or more explainers created with \code{DALEX::explain()} function. They can be switched in top right corner of the application.}
@@ -12,6 +12,8 @@ xai2shiny(..., directory = NULL, selected_variables = NULL)
 \item{directory}{path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.}
 
 \item{selected_variables}{choosen variables for application start-up. There can be more added in the application interface through an input.}
+
+\item{run}{whether to run the shiny application instantly}
 }
 \description{
 This function creates a shiny application for explainers which are adapters for models created using the \code{DALEX} package.

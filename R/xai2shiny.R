@@ -6,6 +6,7 @@
 #' @param ... one or more explainers created with \code{DALEX::explain()} function. They can be switched in top right corner of the application.
 #' @param directory path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.
 #' @param selected_variables choosen variables for application start-up. There can be more added in the application interface through an input.
+#' @param run whether to run the shiny application instantly
 #' @export
 #' @import shiny
 #' @import shinyjs
@@ -39,7 +40,7 @@
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
 #' }
-xai2shiny <- function(..., directory = NULL, selected_variables = NULL) {
+xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE) {
 
   args <- list(..., version=1.0)
   options <- args[names(args) != ""]
@@ -74,8 +75,11 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL) {
   buttons <- ''
   explainers_reactive <- ''
   explainers_static <- ''
+  libs <- ''
   for(i in 1:length(explainers)){
     saveRDS(explainers[[i]], file = paste0(directory,"/exp",i,".rds"))
+    lib <- paste0("library(",explainers[[i]]$model_info$package,")\n")
+    libs <- paste0(libs, lib)
     button <- paste0('tags$li(class = "dropdown", actionBttn("exp',
                      i,'", explainer',i,'$label, style = "fill", block = TRUE))')
     buttons <- paste0(buttons, ",", button)
@@ -87,6 +91,7 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL) {
 
   template_data <- list(obs = obs,
                         cols = cols,
+                        libs = libs,
                         explainers_static = explainers_static,
                         selected_variables = selected_variables,
                         explainers_reactive = explainers_reactive,
@@ -99,7 +104,7 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL) {
   fileConn<-file(file_path)
   writeLines(text_to_file, fileConn)
   close(fileConn)
-  shiny::runApp(directory)
+  if(run) shiny::runApp(directory)
 
 }
 
