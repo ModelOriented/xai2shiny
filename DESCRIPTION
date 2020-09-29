@@ -21,5 +21,6 @@ Imports:
     readr
 Suggests: 
     testthat,
+    shinytest,
     ranger,
     covr

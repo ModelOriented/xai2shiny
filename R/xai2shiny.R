@@ -35,7 +35,7 @@
 #'                      data = titanic_imputed[,-8],
 #'                      y = titanic_imputed$survived)
 #'
-#' Create and run the application
+#' # Create and run the application
 #'
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
