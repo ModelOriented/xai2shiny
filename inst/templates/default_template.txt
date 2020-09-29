@@ -28,7 +28,7 @@ dropdownActionMenu <- function (..., title=NULL, icon = NULL, .list = NULL, head
 
 ui <- dashboardPage(
     skin = "purple",
-    dashboardHeader(title = strong("shimex"),
+    dashboardHeader(title = strong("xai2shiny"),
                     dropdownActionMenu(title="Chosen explainer",
                                        icon = icon("arrow-circle-down")
                                        {{{buttons}}}

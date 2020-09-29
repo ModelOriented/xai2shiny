@@ -8,8 +8,8 @@
 #' @param selected_variables choosen variables for application start-up. There can be more added in the application interface through an input.
 #' @param run whether to run the shiny application instantly
 #' @export
-#' @import shiny
 #' @import shinyjs
+#' @import shiny
 #' @import shinydashboard
 #' @import DALEX
 #' @importFrom shinycssloaders withSpinner
