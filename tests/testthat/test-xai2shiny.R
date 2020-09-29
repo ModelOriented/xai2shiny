@@ -1,5 +1,8 @@
 library(ranger)
 library(shinytest)
+
+shinytest::installDependencies()
+
 data <- DALEX::titanic_imputed
 
 mod_glm <- glm(survived ~ ., data, family = "binomial")
