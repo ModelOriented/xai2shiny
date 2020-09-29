@@ -64,6 +64,52 @@
 <a href="#xai2shiny" class="anchor"></a>xai2shiny</h1></div>
 <!-- badges: start -->
 
+<div id="overview" class="section level2">
+<h2 class="hasAnchor">
+<a href="#overview" class="anchor"></a>Overview</h2>
+<p>The <code>xai2shiny</code> R package creates a <strong>Shiny application</strong> for Explainers (adapters for machine learning models created using the <code>DALEX</code> package). Turn your model into an interactive application containing model’s prediction, performance and many <strong>XAI</strong> methods with just <strong>one function</strong>.</p>
+</div>
+<div id="examples" class="section level2">
+<h2 class="hasAnchor">
+<a href="#examples" class="anchor"></a>Examples</h2>
+<ul>
+<li>
+<input type="checkbox" disabled checked><a href="https://adamr.shinyapps.io/xai2shiny/">Warsaw apartment’s price - GLM and Random Forest models</a>
+</li>
+</ul>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<pre><code># Install the development version from GitHub:
+devtools::install_github("ModelOriented/xai2shiny")</code></pre>
+</div>
+<div id="functionality" class="section level2">
+<h2 class="hasAnchor">
+<a href="#functionality" class="anchor"></a>Functionality</h2>
+<p>The main function is called <strong>xai2shiny</strong> which creates the Shiny <strong>app.R</strong> file and runs it converting your models into an interactive application.</p>
+<p>At the time it supports such functionalities for <strong>multiple models in one application</strong>:</p>
+<ol>
+<li><strong>Model prediction</strong></li>
+<li>
+<strong>Model performance</strong> (with text descriptions of measures)</li>
+<li>
+<strong>Local explanations:</strong> (with text descriptions)
+<ul>
+<li>Break Down plot</li>
+<li>SHAP values plot</li>
+<li>Ceteris Paribus plot</li>
+</ul>
+</li>
+<li>
+<strong>Global explanations:</strong>
+<ul>
+<li>Feature importance plots</li>
+<li>Partial Dependence plots</li>
+</ul>
+</li>
+</ol>
+</div>
 </div>
   </div>
 
