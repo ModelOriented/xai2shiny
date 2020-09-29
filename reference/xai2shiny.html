@@ -139,7 +139,51 @@ The application contains model performance and explanations to fully explore the
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"></pre>
+    <pre class="examples"><div class='input'><span class='co'># Create models</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://github.com/imbs-hl/ranger'>"ranger"</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ModelOriented.github.io/DALEX/'>"DALEX"</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Welcome to DALEX (version: 2.0).</span>
+#&gt; <span class='message'>Find examples and detailed introduction at: https://pbiecek.github.io/ema/</span>
+#&gt; <span class='message'>Additional features will be available after installation of: ggpubr.</span>
+#&gt; <span class='message'>Use 'install_dependencies()' to get all suggested dependencies</span></div><div class='input'><span class='va'>model_rf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/ranger/man/ranger.html'>ranger</a></span><span class='op'>(</span><span class='va'>survived</span> <span class='op'>~</span> <span class='va'>.</span>,
+                   data <span class='op'>=</span> <span class='va'>titanic_imputed</span><span class='op'>)</span>
+<span class='va'>model_glm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/glm.html'>glm</a></span><span class='op'>(</span><span class='va'>survived</span> <span class='op'>~</span> <span class='va'>.</span>,
+                 data <span class='op'>=</span> <span class='va'>titanic_imputed</span>,
+                 family <span class='op'>=</span> <span class='st'>"binomial"</span><span class='op'>)</span>
+
+<span class='co'># Create DALEX explainers</span>
+<span class='va'>explainer_rf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://ModelOriented.github.io/DALEX/reference/explain.html'>explain</a></span><span class='op'>(</span><span class='va'>model_rf</span>,
+                     data <span class='op'>=</span> <span class='va'>titanic_imputed</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>8</span><span class='op'>]</span>,
+                     y <span class='op'>=</span> <span class='va'>titanic_imputed</span><span class='op'>$</span><span class='va'>survived</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Preparation of a new explainer is initiated
+#&gt;   -&gt; model label       :  ranger  ( <span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; data              :  2207  rows  7  cols 
+#&gt;   -&gt; target variable   :  2207  values 
+#&gt;   -&gt; predict function  :  yhat.ranger  will be used ( </span><span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; predicted values  :  numerical, min =  0.008119304 , mean =  0.3220239 , max =  0.9921745  
+#&gt;   -&gt; model_info        :  package ranger , ver. 0.12.1 , task regression ( </span><span style='color: #BBBB00;'> default </span><span> ) 
+#&gt;   -&gt; residual function :  difference between y and yhat ( </span><span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; residuals         :  numerical, min =  -0.78242 , mean =  0.0001329206 , max =  0.8842242  
+#&gt;  </span><span style='color: #00BB00;'> A new explainer has been created! </span><span> </div><div class='input'>
+<span class='va'>explainer_glm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://ModelOriented.github.io/DALEX/reference/explain.html'>explain</a></span><span class='op'>(</span><span class='va'>model_glm</span>,
+                     data <span class='op'>=</span> <span class='va'>titanic_imputed</span><span class='op'>[</span>,<span class='op'>-</span><span class='fl'>8</span><span class='op'>]</span>,
+                     y <span class='op'>=</span> <span class='va'>titanic_imputed</span><span class='op'>$</span><span class='va'>survived</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Preparation of a new explainer is initiated
+#&gt;   -&gt; model label       :  lm  ( </span><span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; data              :  2207  rows  7  cols 
+#&gt;   -&gt; target variable   :  2207  values 
+#&gt;   -&gt; predict function  :  yhat.glm  will be used ( </span><span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; predicted values  :  numerical, min =  0.008128381 , mean =  0.3221568 , max =  0.9731431  
+#&gt;   -&gt; model_info        :  package stats , ver. 4.0.2 , task classification ( </span><span style='color: #BBBB00;'> default </span><span> ) 
+#&gt;   -&gt; residual function :  difference between y and yhat ( </span><span style='color: #BBBB00;'> default </span><span> )
+#&gt;   -&gt; residuals         :  numerical, min =  -0.9628583 , mean =  -2.569729e-10 , max =  0.9663346  
+#&gt;  </span><span style='color: #00BB00;'> A new explainer has been created! </span><span> </div><div class='input'>
+<span class='co'># Create and run the application</span>
+
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>xai2shiny</span><span class='op'>(</span><span class='va'>explainer_rf</span>, <span class='va'>explainer_glm</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
