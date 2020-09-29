@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
   [![R build status](https://github.com/ModelOriented/xai2shiny/workflows/R-CMD-check/badge.svg)](https://github.com/ModelOriented/xai2shiny/actions)
+  [![Coverage Status](https://codecov.io/gh/ModelOriented/xai2shiny/branch/master/graph/badge.svg)](https://codecov.io/github/ModelOriented/xai2shiny?branch=master)
   <!-- badges: end -->
 
 ## Overview

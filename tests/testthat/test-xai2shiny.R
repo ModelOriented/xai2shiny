@@ -42,4 +42,11 @@ test_that("The application runs",{
 
 app$stop()
 
+test_that("The selected_variables parameter functions properly",{
+  expect_true({
+    xai2shiny(explainer_glm, selected_variables = "age", run = FALSE)
+    TRUE
+  })
+})
+
 unlink("xai2shiny", recursive = TRUE)
