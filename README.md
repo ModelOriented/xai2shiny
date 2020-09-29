@@ -10,7 +10,7 @@ The `xai2shiny` R package creates a **Shiny application** for Explainers (adapte
 
 ## Examples
 
-- [x] [Warsaw apartment's price - GLM and Random Forest models](https://adamr.shinyapps.io/xai2shiny/)
+- [x] [Titanic dataset - GLM and Random Forest models](https://adamr.shinyapps.io/xai2shiny/)
 
 ## Installation
 

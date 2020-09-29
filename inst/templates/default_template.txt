@@ -231,21 +231,21 @@ server <- function(input, output, session) {
 
     observeEvent(input$selected_explanations, {
         if (is.null(input$selected_explanations) ){
-          hide("local")
-          hide("global")
+          shinyjs::hide("local")
+          shinyjs::hide("global")
         }
 
         if (length(input$selected_explanations) ==1){
           if (input$selected_explanations == "Local"){
-            show("local")
-            hide("global")
+            shinyjs::show("local")
+            shinyjs::hide("global")
           } else if (input$selected_explanations == "Global"){
-            hide("local")
-            show("global")
+            shinyjs::hide("local")
+            shinyjs::show("global")
           }
         } else{
-          show("local")
-          show("global")
+          shinyjs::show("local")
+          shinyjs::show("global")
         }
     })
 
