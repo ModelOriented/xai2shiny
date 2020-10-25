@@ -56,7 +56,16 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 
   data <- explainers[[1]]$data
 
-  cols1 <- paste0("'",colnames(data), "'")
+  # Checking for variables with just one unique value and ignoring them
+
+  if(length(which(apply(data, 2, function(x) length(unique(x)))==1))>0){
+    cols0 <- colnames(data)[-which(apply(data, 2, function(x) length(unique(x)))==1)]
+  }
+  else{
+    cols0 <- colnames(data)
+  }
+
+  cols1 <- paste0("'",cols0, "'")
   cols2 <- paste(cols1, sep="", collapse = ",")
   cols <- paste0("c(",cols2,")")
 
@@ -78,7 +87,28 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
   libs <- ''
   for(i in 1:length(explainers)){
     saveRDS(explainers[[i]], file = paste0(directory,"/exp",i,".rds"))
-    lib <- paste0("library(",explainers[[i]]$model_info$package,")\n")
+    packages <- explainers[[i]]$model_info$package
+    # Checking if model package has been read correctly
+    if(length(packages)>1){
+      for(package in packages){
+        if(!grepl("\\s", package)){
+          lib <- paste0("library(",package,")\n")
+        }
+      }
+    }
+    else{
+      if(grepl("\\s", packages)){
+        if(grepl("H2O", packages, fixed = TRUE)){
+          lib <- paste0("library('h2o')\n")
+        }
+        else{
+          stop("The package used to create the model was not read correctly.\nSet it manually to the correct value by using:\nexplainer$model_info$package <- 'name of package'")
+        }
+      }
+      else{
+        lib <- paste0("library(",packages,")\n")
+      }
+    }
     libs <- paste0(libs, lib)
     button <- paste0('tags$li(class = "dropdown", actionBttn("exp',
                      i,'", explainer',i,'$label, style = "fill", block = TRUE))')
