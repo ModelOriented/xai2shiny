@@ -118,7 +118,7 @@ ui <- dashboardPage(
                                 background = "blue", solidHeader = TRUE,
                                 collapsible = TRUE, width = 6,
                                 height = 350,
-                                column(width = 3, uiOutput("pdpvariable"),),
+                                column(width = 3, uiOutput("pdpvariable")),
                                 column(width = 9, withSpinner(plotOutput("pdpPlot", height = 260), hide.ui = FALSE)))
                     )))
 
@@ -201,7 +201,12 @@ server <- function(input, output, session) {
 
     output$modelPerf <- renderPlot({
         perf <- model_performance(exp$data)
-        plot(perf, geom = "roc")
+        if(perf$type == "regression"){
+          plot(perf)
+        }
+        else{
+          plot(perf, geom = "roc")
+        }
     })
 
     output$fiPlot <- renderPlot({
