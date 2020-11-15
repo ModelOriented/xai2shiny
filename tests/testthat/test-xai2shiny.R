@@ -19,25 +19,33 @@ test_that("All files are created",{
 app <- ShinyDriver$new("xai2shiny/")
 
 test_that("The application runs",{
-  output_pred <- app$getValue(name = "textPred")
+  output_pred <- app$getValue(name = "text_pred")
   pred_base <- substr(output_pred, 9, 12)
   expect_equal(pred_base, "0.06")
-  output_performance <- app$getValue(name = "textid3")
-  expect_equal(output_performance, "")
-  output_bd_description <- app$getValue(name = "textid1")
+
+  output_bd_description <- app$getValue(name = "text_predictprofile")
   expect_equal(output_bd_description, "")
-  output_cp_description <- app$getValue(name = "textid2")
+
+  output_cp_description <- app$getValue(name = "text_ceterisparibus")
   expect_equal(output_cp_description, "")
+
+  output_performance <- app$getValue(name = "text_performance")
+  expect_equal(output_performance, "")
+
+  # Modyfing text checkbox
   app$setInputs(text_yesno = TRUE)
-  output_performance <- app$getValue(name = "textid3")
-  performance_base <- substr(output_performance, 1, 11)
-  expect_equal(performance_base, "Performance")
-  output_bd_description <- app$getValue(name = "textid1")
+
+  output_bd_description <- app$getValue(name = "text_predictprofile")
   bd_description_base <- substr(output_bd_description, 1, 2)
   expect_equal(bd_description_base, "Lm")
-  output_cp_description <- app$getValue(name = "textid2")
+
+  output_cp_description <- app$getValue(name = "text_ceterisparibus")
   cp_description_base <- substr(output_cp_description, 1, 3)
   expect_equal(cp_description_base, "For")
+
+  output_performance <- app$getValue(name = "text_performance")
+  performance_base <- substr(output_performance, 1, 11)
+  expect_equal(performance_base, "Performance")
 })
 
 app$stop()

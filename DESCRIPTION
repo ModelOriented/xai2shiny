@@ -1,7 +1,7 @@
 Package: xai2shiny
 Type: Package
 Title: Creates Shiny Application From A DALEX Explainer
-Version: 0.1.0
+Version: 0.2.0
 Author: Adam Rydelek <adam.rydelek@gmail.com>
 Maintainer: Adam Rydelek <adam.rydelek@gmail.com>
 Description: The package is used to create Shiny applications that contain all crucial information about models such as their performance and model explanations. The application is created based on one or many explainers which are adapters for models created by the DALEX package.
@@ -12,11 +12,12 @@ RoxygenNote: 7.1.1
 Depends: R (>= 3.6)
 Imports: 
     DALEX,
+    analogsea,
     shiny,
     shinyjs,
     shinydashboard,
     shinyWidgets,
-    shinycssloaders,
+    shinycssloaders (>= 1.0.0),
     whisker,
     readr
 Suggests: 
