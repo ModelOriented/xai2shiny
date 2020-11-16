@@ -2,15 +2,15 @@
 % Please edit documentation in R/cloud_setup.R
 \name{cloud_setup}
 \alias{cloud_setup}
-\title{Create DigitalOcean droplet setup to deploy shiny apps}
+\title{Create DigitalOcean droplet setup to deploy \code{Shiny} apps}
 \usage{
-cloud_setup(droplet, ...)
+cloud_setup(size = 1, ...)
 }
 \arguments{
-\item{droplet}{droplet object created with analogsea package, if creating a new droplet, leave empty}
+\item{size}{initial RAM (in GBs) for the droplet. Available values: 1, 2, 4, 8. You can always resize the droplet later on.}
 
-\item{...}{additional params to function analogsea::droplet_create}
+\item{...}{additional params to function analogsea::docklet_create}
 }
 \description{
-Create DigitalOcean droplet setup to deploy shiny apps
+This function creates a new DigitalOcean droplet with Docker 19.03.12 on Ubuntu 18.04 with every required package and service to run xai2shiny applications in the cloud.
 }
