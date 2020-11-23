@@ -76,15 +76,31 @@ ui <- dashboardPage(
               status = "primary"
             ),
 
-            tags$hr(),
+            # tags$hr(),
 
             # Special window for selecting variables
-            prettyCheckboxGroup(
-                inputId = 'selected_columns',
-                label = 'Select variables to modify:',
-                choices = {{{cols}}},
-                selected = {{{selected_variables}}}
+            # prettyCheckboxGroup(
+            #     inputId = 'selected_columns',
+            #     label = 'Select variables to modify:',
+            #     choices = {{{cols}}},
+            #     selected = {{{selected_variables}}}
+            # ),
+
+            pickerInput(
+              inputId = "selected_columns",
+              label = "Select variables to modify:",
+              choices = {{{cols}}},
+              selected = {{{selected_variables}}},
+              options = list(
+                `actions-box` = TRUE,
+                size = 12,
+                `selected-text-format` = "static",
+                `none-selected-text` = 'Expand the list and choose'
+              ),
+              multiple = TRUE
             ),
+
+            hr(),
 
             # Model variables input
             uiOutput('vars_input'),

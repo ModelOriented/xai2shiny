@@ -76,7 +76,6 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
   cols <- paste0("c(", cols, ")")
 
   if(is.null(selected_variables)) {
-    print(temp_cols)
     # if(length(cols) < 7) selected_variables <- cols
     # else selected_variables <- cols[1:7]
     selected_variables <- paste0("c('", temp_cols[1], "')")
