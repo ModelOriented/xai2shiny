@@ -70,13 +70,16 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
     cols <- colnames(data)
   }
 
+  temp_cols <- cols
   cols <- paste0("'", cols, "'")
   cols <- paste(cols, sep = "", collapse = ",")
   cols <- paste0("c(", cols, ")")
 
-  if(is.null(selected_variables)){
-    if(length(cols) < 7) selected_variables <- cols
-    else selected_variables <- cols[1:7]
+  if(is.null(selected_variables)) {
+    print(temp_cols)
+    # if(length(cols) < 7) selected_variables <- cols
+    # else selected_variables <- cols[1:7]
+    selected_variables <- paste0("c('", temp_cols[1], "')")
   } else {
     temp_variables <- paste0("'", selected_variables, "'")
     temp_variables <- paste(temp_variables, sep = "", collapse = ",")

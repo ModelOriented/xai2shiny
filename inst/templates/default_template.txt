@@ -57,7 +57,7 @@ ui <- dashboardPage(
             # Checkboxes
             checkboxGroupButtons(
               inputId = "selected_explanations",
-              label = "Select explanation types",
+              label = "Select explanation types:",
               choices = c("Local", "Global"),
               selected = "Local",
               justified = TRUE,
@@ -69,15 +69,6 @@ ui <- dashboardPage(
             tags$script("$(\"input:checkbox[name='selected_explanations'][value='Local']\").parent().css('background-color', '#483D8B');"),
             tags$script("$(\"input:checkbox[name='selected_explanations'][value='Global']\").parent().css('background-color', '#1958a6');"),
 
-            # Special window for selecting variables
-            selectInput(
-                inputId = 'selected_columns',
-                label = 'Select variables',
-                choices = {{{cols}}},
-                selected = {{{selected_variables}}},
-                multiple = TRUE
-            ),
-
             # Checkbox for extra text next to explanations (fetched from DALEX package)
             prettyCheckbox(
               inputId = "text_yesno",
@@ -85,8 +76,17 @@ ui <- dashboardPage(
               status = "primary"
             ),
 
-            # Model variables input
             tags$hr(),
+
+            # Special window for selecting variables
+            prettyCheckboxGroup(
+                inputId = 'selected_columns',
+                label = 'Select variables to modify:',
+                choices = {{{cols}}},
+                selected = {{{selected_variables}}}
+            ),
+
+            # Model variables input
             uiOutput('vars_input'),
             width = 3,
 
@@ -210,7 +210,7 @@ server <- function(input, output, session) {
 
     # Calculating a prediction
     pred <- reactive({
-        predict(exp$data, new_observation())
+        round(predict(exp$data, new_observation()), 4)
     })
 
     # Rendering DALEX text describing explanations performance
