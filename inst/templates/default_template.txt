@@ -165,13 +165,19 @@ server <- function(input, output, session) {
     output$textid3 <- renderText({
       if(input$text_yesno){
           perf <- model_performance(exp$data)
-          if(perf$type == "regression"){
-              paste0("Performance measures for ", perf$type, ":<br>","MSE: ", round(perf$measures$mse,3),"<br>", "RMSE: ", round(perf$measures$rmse,3), "<br>",
-                  "R2: ", round(perf$measures$r2,3),"<br>", "MAD: ", round(perf$measures$mad,3))
-          }
-          else{
-              paste0("Performance measures for ", perf$type, ":<br>","Recall: ", round(perf$measures$recall,3),"<br>", "Precision: ", round(perf$measures$precision,3), "<br>",
-                     "F1: ", round(perf$measures$f1,3),"<br>", "Accuracy: ", round(perf$measures$accuracy,3))
+          if(perf$type == "regression") {
+              paste0("Performance measures for ", perf$type,
+                    ":<br>MSE: ", round(perf$measures$mse, 3),
+                    "<br>RMSE: ", round(perf$measures$rmse, 3),
+                    "<br>R2: ", round(perf$measures$r2, 3),
+                    "<br>MAD: ", round(perf$measures$mad, 3))
+          } else {
+              paste0("Performance measures for ", perf$type,
+                    ":<br>Accuracy: ", round(perf$measures$accuracy, 3),
+                    "<br>AUC: ", round(perf$measures$auc, 3),
+                    "<br>Recall: ", round(perf$measures$recall, 3),
+                    "<br>Precision: ", round(perf$measures$precision, 3),
+                    "<br>F1: ", round(perf$measures$f1, 3))
           }
       }
       else ""
