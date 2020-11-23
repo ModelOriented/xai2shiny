@@ -8,16 +8,18 @@
 #' @importFrom analogsea droplet
 #' @importFrom analogsea docklet_create
 #' @importFrom analogsea docklet_shinyserver
+#' @importFrom ssh ssh_connect
 cloud_setup <- function(size = 1, ...){
   if(!size %in% c(1,2,4,8)){
     stop("The droplet's size (RAM) can be 1, 2, 4, or 8 GB. Please select one of these values.")
   }
   size_do <- paste0("s-1vcpu-",size,"gb")
   # Create new droplet with Docklet 19.03.12 on Ubuntu 18.04 and selected size
-  docklet <- docklet_create(size = getOption("do_size", size_do))
+  docklet <- docklet_create(size = getOption("do_size", size_do), ...)
+  Sys.sleep(15) # Wait for the droplet to initialize
   docklet <- droplet(docklet$id)
   # Install Shiny Server and all prerequisities from xai2shiny Docker image
-  docklet %>% docklet_shinyserver(img = 'adamoso/xai2shiny')
+  docklet_shinyserver(droplet = docklet, img = 'adamoso/xai2shiny')
 }
 
 #' Deploy Shiny applications to the cloud
@@ -30,7 +32,14 @@ cloud_setup <- function(size = 1, ...){
 #' @param packages vector of packages (package names) that are needed for the application to run.
 #' @export
 #' @importFrom analogsea docklet_shinyapp
-deploy_shiny <- function(droplet, path, port, packages){
+#' @importFrom analogsea docklet_run
+#' @importFrom analogsea droplet_ssh
+#' @importFrom analogsea droplet_upload
+#' @importFrom readr read_file
+#' @importFrom whisker whisker.render
+deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '', browse = TRUE, ssh_user = "root"){
+
+  # Check if droplet exists
   if (missing(droplet) || is.null(droplet) || class(droplet) != "droplet" && class(droplet) != "numeric"){
     stop("You must create a droplet using xai2shiny::cloud_setup() before deploying your application.\n  After doing so, provide your droplet's id/droplet's object as the droplet parameter.")
   }
@@ -40,5 +49,48 @@ deploy_shiny <- function(droplet, path, port, packages){
   if (class(droplet) == "numeric"){
     docklet <- droplet(id = droplet)
   }
-  docklet_shinyapp(droplet = docklet, path = path, port = port, img = 'adamoso/xai2shiny')
+
+  # Create folder for Dockerfile in droplet
+  droplet_ssh(docklet, "mkdir -p /home/docker_setup")
+
+  # Prepare the Dockerfile and data to fill it
+  path_to_dockerfile <- system.file("docker", "Dockerfile", package="xai2shiny")
+  dockerfile <- readr::read_file(path_to_dockerfile)
+  pkgs <- paste("'", packages, "'", sep = "", collapse = ",")
+  pkgs <- paste0("c(", pkgs, ")")
+  packages_needed <- list(packages = pkgs)
+
+  # Filling Dockefile with whisker
+  text_to_file <- whisker::whisker.render(dockerfile, packages_needed)
+  directory <- tempdir()
+  file_path <- paste0(directory, "/Dockerfile")
+  file.create(file_path)
+  file_conn <- file(file_path)
+  writeLines(text_to_file, file_conn)
+  close(file_conn)
+
+  # Upload Dockerfile to droplet
+  droplet_upload(docklet, file_path, "/home/docker_setup/")
+
+  # Build the image
+  image_name <- tolower(packages[1])
+  cmd <- paste0("docker build -t ", image_name, " /home/docker_setup/")
+  droplet_ssh(docklet, cmd)
+
+  # Upload Shiny app files to droplet
+  droplet_ssh(docklet, "mkdir -p /srv/shinyapps")
+  droplet_upload(docklet, path, "/srv/shinyapps/")
+
+  # Run the application
+  docklet_run(docklet, " -d", " -p ", paste0(port, ":3838"),
+              cn(" -v ", '/srv/shinyapps/:/srv/shiny-server/'),
+              cn(" -w", dir), " ", image_name, ssh_user = ssh_user)
+
+  # Open the application in web browser
+  url <- sprintf("http://%s:%s/", droplet_ip(docklet), port)
+  if (browse) {
+    Sys.sleep(5) # give Shiny Server a few seconds to start up
+    browseURL(url)
+  }
+
 }

@@ -4,16 +4,24 @@
 \alias{deploy_shiny}
 \title{Deploy Shiny applications to the cloud}
 \usage{
-deploy_shiny(droplet, path, port, packages)
+deploy_shiny(
+  droplet,
+  path,
+  packages = "stats",
+  port = 80,
+  dir = "",
+  browse = TRUE,
+  ssh_user = "root"
+)
 }
 \arguments{
 \item{droplet}{the droplet's id or droplet's object. The IP can be checked by running \code{analogsea::droplets()}.}
 
 \item{path}{path to the \code{Shiny} application (\code{xai2shiny} application).}
 
-\item{port}{port at which the application will run.}
-
 \item{packages}{vector of packages (package names) that are needed for the application to run.}
+
+\item{port}{port at which the application will run.}
 }
 \description{
 This function deploys a selected \code{Shiny} application (\code{xai2shiny} application) to the created droplet.
