@@ -8,16 +8,18 @@
 #' @importFrom analogsea droplet
 #' @importFrom analogsea docklet_create
 #' @importFrom analogsea docklet_shinyserver
-#' @importFrom ssh ssh_connect
 cloud_setup <- function(size = 1, ...){
-  if(!size %in% c(1,2,4,8)){
+  if(!size %in% c(1,2,4,8)) {
     stop("The droplet's size (RAM) can be 1, 2, 4, or 8 GB. Please select one of these values.")
   }
+
   size_do <- paste0("s-1vcpu-",size,"gb")
+
   # Create new droplet with Docklet 19.03.12 on Ubuntu 18.04 and selected size
   docklet <- docklet_create(size = getOption("do_size", size_do), ...)
   Sys.sleep(15) # Wait for the droplet to initialize
   docklet <- droplet(docklet$id)
+
   # Install Shiny Server and all prerequisities from xai2shiny Docker image
   docklet_shinyserver(droplet = docklet, img = 'adamoso/xai2shiny')
 }
@@ -28,8 +30,11 @@ cloud_setup <- function(size = 1, ...){
 #'
 #' @param droplet the droplet's id or droplet's object. The IP can be checked by running \code{analogsea::droplets()}.
 #' @param path path to the \code{Shiny} application (\code{xai2shiny} application).
-#' @param port port at which the application will run.
 #' @param packages vector of packages (package names) that are needed for the application to run.
+#' @param port port at which the application will run.
+#' @param dir where to deploy an app, urgent to run docklet properly
+#' @param browse a boolean, which indicates whether open the app on the web after deploying
+#' @param ssh_user the name of ssh console user, urgent to run docklet properly
 #' @export
 #' @importFrom analogsea docklet_shinyapp
 #' @importFrom analogsea docklet_run
@@ -92,5 +97,4 @@ deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '',
     Sys.sleep(5) # give Shiny Server a few seconds to start up
     browseURL(url)
   }
-
 }

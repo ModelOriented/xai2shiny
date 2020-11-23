@@ -22,6 +22,12 @@ deploy_shiny(
 \item{packages}{vector of packages (package names) that are needed for the application to run.}
 
 \item{port}{port at which the application will run.}
+
+\item{dir}{where to deploy an app, urgent to run docklet properly}
+
+\item{browse}{a boolean, which indicates whether open the app on the web after deploying}
+
+\item{ssh_user}{the name of ssh console user, urgent to run docklet properly}
 }
 \description{
 This function deploys a selected \code{Shiny} application (\code{xai2shiny} application) to the created droplet.

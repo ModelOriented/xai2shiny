@@ -16,6 +16,7 @@
 #' @importFrom shinyWidgets checkboxGroupButtons
 #' @importFrom whisker whisker.render
 #' @importFrom readr read_file
+#' @importFrom utils browseURL read.csv
 #' @examples
 #' # Create models
 #' library("ranger")
@@ -131,13 +132,16 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
     explainers_static <- paste0(explainers_static, "\n", explainer_static)
   }
 
+  static_text <- read.csv(system.file("extdata", "app_static_text.csv", package="xai2shiny"), sep = ';')
+
   template_data <- list(obs = obs,
                         cols = cols,
                         libs = libs,
                         explainers_static = explainers_static,
                         selected_variables = selected_variables,
                         explainers_reactive = explainers_reactive,
-                        buttons = buttons)
+                        buttons = buttons,
+                        text_prediction = paste0("'", as.character(static_text$text[static_text$text_destination == 'prediction']), "'"))
 
   # Filling template values with whisker
   text_to_file <- whisker::whisker.render(template, template_data)
