@@ -38,7 +38,7 @@ ui <- dashboardPage(
     skin = "purple",
 
     # Header which includes a dashboard title and an unordered list of deployed explainers
-    dashboardHeader(title = strong("xai2shiny"),
+    dashboardHeader(title = "xai2shiny",
                     dropdownActionMenu(title="Chosen explainer"
                                        , icon = icon("arrow-circle-down")
                                        {{{buttons}}}
