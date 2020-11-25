@@ -248,6 +248,7 @@ server <- function(input, output, session) {
           } else {
               paste0("Performance measures for ", perf$type,
                     ":<br>Accuracy: ", round(perf$measures$accuracy, 3),
+                    "<br>AUC: ", round(perf$measures$auc, 3),
                     "<br>Recall: ", round(perf$measures$recall, 3),
                     "<br>Precision: ", round(perf$measures$precision, 3),
                     "<br>F1: ", round(perf$measures$f1, 3))
