@@ -16,7 +16,7 @@ xai2shiny(..., directory = NULL, selected_variables = NULL, run = TRUE)
 \item{run}{whether to run the shiny application instantly}
 }
 \description{
-This function creates a shiny application for explainers which are adapters for models created using the \code{DALEX} package.
+This function creates a \code{Shiny} application for explainers which are adapters for models created using the \code{DALEX} package.
 The application contains model performance and explanations to fully explore the model.
 }
 \examples{
