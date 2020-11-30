@@ -204,7 +204,7 @@ ui <- dashboardPage(
 
             # XAI resources tab
             tabItem(tabName = "xai_resources",
-                    p(id = "widget1", "Learn more about XAI")
+                    column(7, includeHTML('extra_files/learn_more_about_xai.html'))
             )
         )
 

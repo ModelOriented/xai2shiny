@@ -67,8 +67,8 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
   # Filling template
   template_text_filled <- generate_template(objects_to_template)
 
-  # Saving filled template as Shiny application
-  save_filled_template(directory, template_text_filled)
+  # Saving filled template as Shiny application and .html file with XAI tab content
+  save_files(directory, template_text_filled)
 
   # Additional app running
   if(run) shiny::runApp(directory)
@@ -230,11 +230,16 @@ generate_template <- function(objects_to_template) {
 
 
 
-# Saving filled template text to the file as a Shiny app.
-save_filled_template <- function(directory, template_text_filled) {
-  file_path <- paste0(directory, "/app.R")
-  file.create(file_path)
-  file_conn <- file(file_path)
-  writeLines(template_text_filled, file_conn)
-  close(file_conn)
+# Saving filled template text to the file as a Shiny app and XAI tab content
+save_files <- function(directory, template_text_filled) {
+  # Saving Shiny app
+  template_file_path <- paste0(directory, "/app.R")
+  file.create(template_file_path)
+  template_file_conn <- file(template_file_path)
+  writeLines(template_text_filled, template_file_conn)
+  close(template_file_conn)
+
+  # Saving XAI tab content
+  dir.create(paste0(directory, '/extra_files'))
+  file.copy(system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny"), paste0(directory, "/extra_files/learn_more_about_xai.html"))
 }
