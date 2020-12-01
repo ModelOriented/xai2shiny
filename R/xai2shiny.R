@@ -12,6 +12,7 @@
 #' @import shinydashboard
 #' @import DALEX
 #' @importFrom shinyjs useShinyjs show hide
+#' @importFrom shinyBS bsPopover
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom shinyWidgets checkboxGroupButtons
 #' @importFrom whisker whisker.render

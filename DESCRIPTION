@@ -15,6 +15,7 @@ Imports:
     analogsea,
     shiny,
     shinyjs,
+    shinyBS,
     shinydashboard,
     shinyWidgets,
     shinycssloaders (>= 1.0.0),
