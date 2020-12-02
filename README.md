@@ -19,8 +19,7 @@ devtools::install_github("ModelOriented/xai2shiny")
 ## Example
 
 Package usage example will be based on the *titanic* dataset, including GLM and Random Forest models.
-
-
+[The final application created using the scipt below.](http://138.68.225.150:2211/xai2shiny/)
 First, it is necessary to have any explainers created whatsoever:
 
 ```
@@ -62,17 +61,32 @@ Above, in `xai2shiny` function, apart from explainers, following attributes were
 * `selected_variables` - a vector containing variables list chosen at an app start-up (used for modification and local explanations research),
 * `run` - whether to run an app immediately after creating.
 
-Further cloud deployment can be performed. Firsty, it is necessary to set up a connection to DigitalOcean account and create a *droplet* instance to place your application on:
+Further **cloud deployment** can be performed. In order to do so, there are just three steps necessary to enjoy your new *xai2shiny* application in the cloud.
+
+1. If you don't have an account on DigitalOcean, create one [here](https://m.do.co/c/c07558eaca11) and get $100 free credit.
+2. [Create an SSH key](https://docs.github.com/en/enterprise/2.17/user/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?fbclid=IwAR3E66nCkq5cS6BSSHvgv-tzFa9MjWL37bUgRz3DKwglTO8Zn_t6tmKwvRo) if you don't have one yet.
+3. [Deploy the SSH key to DigitalOcean](https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/to-account/)
+
+And that's it, you are ready to get back to R and deploy your application. In order to create a new cloud instance, called a *droplet* by DigitalOcean, running Docker on Ubuntu with all prerequisities installed, just run:
 
 ```
-xai2shiny::cloud_setup()
+xai2shiny::cloud_setup(size)
 ```
 
-Then, last but not least, you have to deploy your created xai2shiny app:
+* `size` - ram size desired for the droplet, defaults to 1GB. It can be modified later through [DigitalOceans website](https://www.digitalocean.com/).
+
+Now that your droplet is setup, just deploy the created *xai2shiny* application with *one function*.
 
 ```
-deploy_shiny(droplet = 111111111, path = 'X:/xai2shiny/', packages = c('ranger', 'stats'))
+deploy_shiny(droplet = <your_droplet_id>, path = './xai2shiny', packages = "ranger")
 ```
+
+
+* `droplet` - the droplet object/droplet's ID that can be read from running `analogsea::droplets()`.
+* `path` - path to the *xai2shiny* application
+* `packages` - packages used to create or run the model, they will be installed on the droplet.
+
+And that's it, the *xai2shiny* application is running and will automatically open in your default web browser, now all that's left is to share it!
 
 ## Functionality
 

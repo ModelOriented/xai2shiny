@@ -1,11 +1,10 @@
-library(ranger)
 library(shinytest)
 
 shinytest::installDependencies()
 
 data <- DALEX::titanic_imputed
 
-mod_glm <- glm(survived ~ ., data, family = "binomial")
+mod_glm <- gbm(survived ~ ., data, family = "binomial")
 explainer_glm <- DALEX::explain(mod_glm, data = data[,-8], y=data$survived)
 
 xai2shiny(explainer_glm, directory = getwd(), run = FALSE)

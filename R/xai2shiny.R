@@ -216,12 +216,15 @@ save_explainers <- function(explainers, directory, objects_to_template) {
 generate_template <- function(objects_to_template) {
 
   # Reading necessary files: template and static text for prediction description
-  static_text <- read.csv(system.file("extdata", "app_static_text.csv", package = "xai2shiny"), sep = ';')
+  static_text <- read.csv(system.file("extdata", "app_static_text.csv", package="xai2shiny"), sep = ';')
+  prediction_text <- ifelse(explainer_glm$model_info$type == "classification",
+                            paste0("'",as.character(static_text$text[static_text$text_destination == 'prediction_classification']),"'"),
+                            paste0("'",as.character(static_text$text[static_text$text_destination == 'prediction_regression']),"'"))
   path_to_template <- system.file("templates", "default_template.txt", package = "xai2shiny")
   template_text <- readr::read_file(path_to_template)
 
   # Adding further template objects
-  objects_to_template['text_prediction'] <- paste0("'", as.character(static_text$text[static_text$text_destination == 'prediction']), "'")
+  objects_to_template['text_prediction'] <- prediction_text
 
   # Filling template values with whisker
   template_text_filled <- whisker::whisker.render(template_text, objects_to_template)
@@ -239,8 +242,4 @@ save_files <- function(directory, template_text_filled) {
   template_file_conn <- file(template_file_path)
   writeLines(template_text_filled, template_file_conn)
   close(template_file_conn)
-
-  # Saving XAI tab content
-  dir.create(paste0(directory, '/extra_files'))
-  file.copy(system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny"), paste0(directory, "/extra_files/learn_more_about_xai.html"))
 }
