@@ -1,5 +1,6 @@
 library("shiny")
 library("shinyjs")
+library("shinyBS")
 library("shinydashboard")
 library("shinycssloaders")
 library("shinyWidgets")
@@ -76,16 +77,6 @@ ui <- dashboardPage(
               status = "primary"
             ),
 
-            # tags$hr(),
-
-            # Special window for selecting variables
-            # prettyCheckboxGroup(
-            #     inputId = 'selected_columns',
-            #     label = 'Select variables to modify:',
-            #     choices = {{{cols}}},
-            #     selected = {{{selected_variables}}}
-            # ),
-
             pickerInput(
               inputId = "selected_columns",
               label = "Select variables to modify:",
@@ -140,7 +131,14 @@ ui <- dashboardPage(
                                         height = 130,
                                         p({{{text_prediction}}}),
                                         withSpinner(uiOutput("text_pred"), hide.ui = FALSE)),
-                                    box(title = p(id = "tab2", "Model Performance"),
+                                    box(title = p(id = "tab2", "Model Performance",
+                                                  tags$span(icon("info-circle"), id = "icon_performance", style = "color: #C0C0C0;")),
+                                        bsPopover("icon_performance",
+                                                  title = "What is Model Performance?",
+                                                  content = paste('Below you can find one of sound methods used to measure model`s quality (respecting regression / classification division).',
+                                                                  "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                                  placement = "right",
+                                                  options = list(container = 'body')),
                                         background = "blue",
                                         solidHeader = TRUE,
                                         collapsible = TRUE,
@@ -153,7 +151,14 @@ ui <- dashboardPage(
                         div(id = "local",
 
                           # Local: breakdown/ shap values
-                          box(title = p(id = "tab3", "Predict Parts"),
+                          box(title = p(id = "tab3", "Predict Parts",
+                                        tags$span(icon("info-circle"), id = "icon_predict_parts", style = "color: #C0C0C0;")),
+                              bsPopover("icon_predict_parts",
+                                        title = "What is Predict Parts?",
+                                        content = paste("Here you can find particular features values impact on the final prediction",
+                                                         "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                        placement = "right",
+                                        options = list(container = 'body')),
                               background = "purple",
                               solidHeader = TRUE,
                               collapsible = TRUE,
@@ -167,7 +172,14 @@ ui <- dashboardPage(
                               textOutput("text_predictprofile")),
 
                           # Local: Ceteris paribus
-                          box(title = p(id = "tab4", "Predict Profile"),
+                          box(title = p(id = "tab4", "Predict Profile",
+                                        tags$span(icon("info-circle"), id = "icon_predict_profile", style = "color: #C0C0C0;")),
+                              bsPopover("icon_predict_profile",
+                                        title = "What is Predict Profile?",
+                                        content = paste("In this visualization you can find prediction response to specific feature alterations.",
+                                                        "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                        placement = "right",
+                                        options = list(container = 'body')),
                               background = "purple",
                               solidHeader = TRUE,
                               collapsible = TRUE,
@@ -181,8 +193,15 @@ ui <- dashboardPage(
                         hidden(
                           div(id = "global",
 
-                            # Feature importance
-                            box(title = p(id = "tab5", "Model Parts"),
+                            # Global: Feature importance
+                            box(title = p(id = "tab5", "Model Parts",
+                                          tags$span(icon("info-circle"), id = "icon_feature_importance", style = "color: #C0C0C0;")),
+                                bsPopover("icon_feature_importance",
+                                          title = "What is Model Parts?",
+                                          content = paste("By using different methods it is able to measure how much models rely on given variables.",
+                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                          placement = "right",
+                                          options = list(container = 'body')),
                                 background = "blue",
                                 solidHeader = TRUE,
                                 collapsible = TRUE,
@@ -190,8 +209,15 @@ ui <- dashboardPage(
                                 height = 350,
                                 withSpinner(plotOutput("plot_fi", height = 260), hide.ui = FALSE)),
 
-                            # Partial-Depencende plot
-                            box(title = p(id = "tab6", "Model Profile"),
+                            # Global: Partial-Depencende plot
+                            box(title = p(id = "tab6", "Model Profile",
+                                          tags$span(icon("info-circle"), id = "icon_model_profile", style = "color: #C0C0C0;")),
+                                bsPopover("icon_model_profile",
+                                          title = "What is Model Profile?",
+                                          content = paste('Partial Dependence is an expected value of Ceteris Paribus (Predict Profile) function across whole dataset.',
+                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                          placement = "right",
+                                          options = list(container = 'body')),
                                 background = "blue", solidHeader = TRUE,
                                 collapsible = TRUE,
                                 width = 6,
@@ -204,7 +230,7 @@ ui <- dashboardPage(
 
             # XAI resources tab
             tabItem(tabName = "xai_resources",
-                    p(id = "widget1", "Learn more about XAI")
+                    column(7, includeHTML('extra_files/learn_more_about_xai.html'))
             )
         )
 
