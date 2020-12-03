@@ -61,7 +61,9 @@ Above, in `xai2shiny` function, apart from explainers, following attributes were
 * `selected_variables` - a vector containing variables list chosen at an app start-up (used for modification and local explanations research),
 * `run` - whether to run an app immediately after creating.
 
-Further **cloud deployment** can be performed. In order to do so, there are just three steps necessary to enjoy your new *xai2shiny* application in the cloud.
+## Cloud deployment
+
+Further cloud deployment can be performed. In order to do so, there are just three steps necessary to enjoy your new *xai2shiny* application in the cloud.
 
 1. If you don't have an account on DigitalOcean, create one [here](https://m.do.co/c/c07558eaca11) and get $100 free credit.
 2. [Create an SSH key](https://docs.github.com/en/enterprise/2.17/user/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?fbclid=IwAR3E66nCkq5cS6BSSHvgv-tzFa9MjWL37bUgRz3DKwglTO8Zn_t6tmKwvRo) if you don't have one yet.
