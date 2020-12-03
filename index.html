@@ -43,7 +43,7 @@
         <div class="info">
           <span class="partof">part of the <a href="https://github.com/ModelOriented/DrWhy">DrWhy.AI</a>
            developed by the <a href="https://mi2.mini.pw.edu.pl/">MI^2 DataLab</a> </span>
-          <span class="version version-default">0.2.0</span>
+          <span class="version version-default">1.0.0</span>
         </div>
       </div>
     </div>
@@ -79,22 +79,81 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>The <code>xai2shiny</code> R package creates a <strong>Shiny application</strong> for Explainers (adapters for machine learning models created using the <code>DALEX</code> package). Turn your model into an interactive application containing model’s prediction, performance and many <strong>XAI</strong> methods with just <strong>one function</strong>.</p>
-</div>
-<div id="examples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h2>
-<ul>
-<li>
-<input type="checkbox" disabled checked><a href="https://adamr.shinyapps.io/xai2shiny/">Titanic dataset - GLM and Random Forest models</a>
-</li>
-</ul>
+<p>The <code>xai2shiny</code> R package creates a <strong>Shiny application</strong> for Explainers (adapters for machine learning models created using the <code>DALEX</code> package). Turn your model into an interactive application containing model’s prediction, performance and many <strong>XAI</strong> methods with just <strong>one function</strong>. Furthermore, with <code>xai2shiny</code> you can simply export your application to the cloud and share it with others.</p>
 </div>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <pre><code># Install the development version from GitHub:
 devtools::install_github("ModelOriented/xai2shiny")</code></pre>
+</div>
+<div id="example" class="section level2">
+<h2 class="hasAnchor">
+<a href="#example" class="anchor"></a>Example</h2>
+<p>Package usage example will be based on the <em>titanic</em> dataset, including GLM and Random Forest models. <a href="http://138.68.225.150:2211/xai2shiny/">The final application created using the scipt below.</a> First, it is necessary to have any explainers created whatsoever:</p>
+<pre><code><a href="https://rdrr.io/r/base/library.html">library("xai2shiny")
+library("ranger")
+library("DALEX")
+
+# Creating ML models
+model_rf &lt;- ranger(survived ~ .,
+                   data = titanic_imputed,
+                   classification = TRUE, 
+                   probability = TRUE)
+model_glm &lt;- glm(survived ~ .,
+                 data = titanic_imputed,
+                 family = "binomial")
+
+# Creating DALEX explainers
+explainer_rf &lt;- explain(model_rf,
+                     data = titanic_imputed[,-8],
+                     y = titanic_imputed$survived)
+
+explainer_glm &lt;- explain(model_glm,
+                     data = titanic_imputed[,-8],
+                     y = titanic_imputed$survived)</a></code></pre>
+<p>Then all is left to do is to run:</p>
+<pre><code><a href="reference/xai2shiny.html">xai2shiny::xai2shiny(explainer_glm, explainer_rf, 
+                     directory = 'D:/Studia/test',
+                     selected_variables = c('gender', 'age'),
+                     run = FALSE)</a></code></pre>
+<p>Above, in <code>xai2shiny</code> function, apart from explainers, following attributes were provided:</p>
+<ul>
+<li>
+<code>directory</code> - a location indicator where to create whole <code>xai2shiny</code> directory and place there required files (an app and explainers),</li>
+<li>
+<code>selected_variables</code> - a vector containing variables list chosen at an app start-up (used for modification and local explanations research),</li>
+<li>
+<code>run</code> - whether to run an app immediately after creating.</li>
+</ul>
+</div>
+<div id="cloud-deployment" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cloud-deployment" class="anchor"></a>Cloud deployment</h2>
+<p>Further cloud deployment can be performed. In order to do so, there are just three steps necessary to enjoy your new <em>xai2shiny</em> application in the cloud.</p>
+<ol>
+<li>If you don’t have an account on DigitalOcean, create one <a href="https://m.do.co/c/c07558eaca11">here</a> and get $100 free credit.</li>
+<li>
+<a href="https://docs.github.com/en/enterprise/2.17/user/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent?fbclid=IwAR3E66nCkq5cS6BSSHvgv-tzFa9MjWL37bUgRz3DKwglTO8Zn_t6tmKwvRo">Create an SSH key</a> if you don’t have one yet.</li>
+<li><a href="https://www.digitalocean.com/docs/droplets/how-to/add-ssh-keys/to-account/">Deploy the SSH key to DigitalOcean</a></li>
+</ol>
+<p>And that’s it, you are ready to get back to R and deploy your application. In order to create a new cloud instance, called a <em>droplet</em> by DigitalOcean, running Docker on Ubuntu with all prerequisities installed, just run:</p>
+<pre><code><a href="reference/cloud_setup.html">xai2shiny::cloud_setup(size)</a></code></pre>
+<ul>
+<li>
+<code>size</code> - ram size desired for the droplet, defaults to 1GB. It can be modified later through <a href="https://www.digitalocean.com/">DigitalOceans website</a>.</li>
+</ul>
+<p>Now that your droplet is setup, just deploy the created <em>xai2shiny</em> application with <em>one function</em>.</p>
+<pre><code>deploy_shiny(droplet = &lt;your_droplet_id&gt;, path = './xai2shiny', packages = "ranger")</code></pre>
+<ul>
+<li>
+<code>droplet</code> - the droplet object/droplet’s ID that can be read from running <code><a href="https://analogsea.icu/reference/droplets.html">analogsea::droplets()</a></code>.</li>
+<li>
+<code>path</code> - path to the <em>xai2shiny</em> application</li>
+<li>
+<code>packages</code> - packages used to create or run the model, they will be installed on the droplet.</li>
+</ul>
+<p>And that’s it, the <em>xai2shiny</em> application is running and will automatically open in your default web browser, now all that’s left is to share it!</p>
 </div>
 <div id="functionality" class="section level2">
 <h2 class="hasAnchor">
