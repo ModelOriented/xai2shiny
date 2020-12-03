@@ -1,4 +1,3 @@
-library(ranger)
 library(shinytest)
 
 shinytest::installDependencies()

@@ -1,3 +1,6 @@
+# It is impossible to test DigitalOcean droplet's operation, hence no cov.
+# nocov start
+
 #' Create DigitalOcean droplet setup to deploy \code{Shiny} apps
 #'
 #' This function creates a new DigitalOcean droplet with Docker 19.03.12 on Ubuntu 18.04 with every required package and service to run xai2shiny applications in the cloud.
@@ -98,3 +101,5 @@ deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '',
     browseURL(url)
   }
 }
+
+# nocov end
