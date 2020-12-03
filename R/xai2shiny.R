@@ -66,7 +66,7 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
   objects_to_template <- save_explainers(explainers, directory, objects_to_template)
 
   # Filling template
-  template_text_filled <- generate_template(objects_to_template)
+  template_text_filled <- generate_template(objects_to_template, explainers)
 
   # Saving filled template as Shiny application and .html file with XAI tab content
   save_files(directory, template_text_filled)
@@ -213,11 +213,11 @@ save_explainers <- function(explainers, directory, objects_to_template) {
 
 
 # Generating template text by filling all the necessary placeholders with created data.
-generate_template <- function(objects_to_template) {
+generate_template <- function(objects_to_template, explainers) {
 
   # Reading necessary files: template and static text for prediction description
   static_text <- read.csv(system.file("extdata", "app_static_text.csv", package="xai2shiny"), sep = ';')
-  prediction_text <- ifelse(explainer_glm$model_info$type == "classification",
+  prediction_text <- ifelse(explainers[[1]]$model_info$type == "classification",
                             paste0("'",as.character(static_text$text[static_text$text_destination == 'prediction_classification']),"'"),
                             paste0("'",as.character(static_text$text[static_text$text_destination == 'prediction_regression']),"'"))
   path_to_template <- system.file("templates", "default_template.txt", package = "xai2shiny")
