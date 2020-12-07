@@ -25,4 +25,7 @@ Suggests:
     testthat,
     shinytest,
     ranger,
-    covr
+    covr,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
