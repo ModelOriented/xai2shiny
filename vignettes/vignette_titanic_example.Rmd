@@ -50,28 +50,28 @@ model_glm <- glm(survived ~ .,
 
 # Explainers based on models
 
-In fact, `xai2shiny` function accepts only explainers, i.e. `DALEX` special objects basing on provided models. Let's create all 3 explainers:
+In fact, `xai2shiny` function accepts only explainers, i.e. `DALEX` special objects basing on provided models. Let's create all necessary explainers:
 
-```{r}
+```{r results='hide'}
 explainer_rf <- explain(model_rf,
-                    data = titanic_imputed[,-8],
-                    y = titanic_imputed$survived)
+                        data = titanic_imputed[,-8],
+                        y = titanic_imputed$survived)
 explainer_glm <- explain(model_glm,
-                data = titanic_imputed[,-8],
-                      y = titanic_imputed$survived)
+                         data = titanic_imputed[,-8],
+                         y = titanic_imputed$survived)
 ```
 
 # Shiny application
 
-After that, only thing left to do is to generate an app and run it:
+After that, the only thing left to do is to generate an app and run it:
 
 ```{r eval=FALSE}
-xai2shiny(explainer_rf, explainer_glm, directory = './', run = FALSE)
+xai2shiny(explainer_rf, explainer_glm, directory = './', run = TRUE)
 ```
 
 # Cloud deployment
 
-Further cloud deployment can be done in 2 simple steps (see [README example for details](https://github.com/ModelOriented/xai2shiny/blob/master/README.md)):
+Further cloud deployment can be done in 2 simple steps (see [README example](https://github.com/ModelOriented/xai2shiny/blob/master/README.md) for details):
 
 ```{r eval=FALSE}
 xai2shiny::cloud_setup()
@@ -79,49 +79,33 @@ my_droplet_id <- 1 # Compare it to your DigitalOcean account and set a proper ID
 deploy_shiny(droplet = my_droplet_id, path = './xai2shiny', packages = "ranger")
 ```
 
-# External model's package
+# External package's model
 
-As the package covers as many external models sources as `DALEX`, let's consider widely known `h2o` package:
+As `xai2shiny` covers as many external models sources as `DALEX` and `DALEXtra`, let's consider widely known `mlr3` package:
 
 ```{r eval=FALSE}
-# library("h2o")
-# h2o.init()
-# 
-# # Preparing data
-# y <- "survived"
-# x <- setdiff(names(titanic_imputed), y)
-# 
-# titanic_imputed_h2o <- as.h2o(titanic_imputed)
-# frames <- h2o.splitFrame(data = titanic_imputed_h2o, ratios = 0.7)
-# train <- frames[[1]]
-# test <- frames[[2]]
-#   
-# # For binary classification, response should be a factor
-# train[, y] <- as.factor(train[, y])
-# test[, y] <- as.factor(test[, y])
-# 
-# # Creating model
-# model_h2o <- h2o.automl(x = x, y = y, 
-#                         training_frame = train,
-#                         max_models = 10,
-#                         seed = 1)
-# 
-# # Creating explainer
-# explainer_h2o <- explain(model_h2o, data = titanic_imputed[,-8],
-#                     y = titanic_imputed$survived)
-# 
-# # Running xai2shiny function, but omit running generated shiny application
-# xai2shiny(explainer_h2o, directory = 'D:/Studia/test2', run = FALSE)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# library("lares") # devtools::install_github("laresbernardo/lares")
-# model <- h2o_automl(titanic_imputed, "survived", quiet = FALSE)
-# explainer <- h2o_explainer(model$datasets$test, model = model$model, y = "survived")
-# xai2shiny(explainer, directory = 'D:/Studia/test2', run = FALSE)
+library("DALEXtra")
+library("mlr3")
+library("mlr3learners")
+
+titanic <- titanic_imputed
+titanic[, 'survived'] <- as.factor(titanic[, 'survived'])
+
+task <- TaskClassif$new(id = 'titanic', 
+                        backend = titanic, 
+                        target = "survived", 
+                        positive = '1')
+
+learner <- mlr_learners$get('classif.log_reg')
+learner$predict_type = "prob"
+
+train_set = sample(task$nrow, 0.8 * task$nrow)
+test_set = setdiff(seq_len(task$nrow), train_set)
+
+learner$train(task, row_ids = train_set)
+explainer_mlr <- explain_mlr3(learner,
+                              data = titanic[,-8], 
+                              y = as.numeric(as.character(titanic$survived)),
+                              label = "mlr3 model")
+xai2shiny(explainer_mlr, directory = "./", run = FALSE)
 ```
