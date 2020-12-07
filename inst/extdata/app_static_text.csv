@@ -1,2 +1,4 @@
 text_destination;text
-prediction;This is a model prediction:
+prediction_regression;The predicted value is:
+prediction_classification;The predicted probability is:
+
