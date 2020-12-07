@@ -1,16 +1,42 @@
-<h1>Learn more about XAI</h1>
+<div>
+	
+	<h1>Learn more about XAI</h1>
 
-<p>Explainable Artificial Intelligence has never been a straightforward part of a Data Science ecosystem. Therefore, this part is provided for every user which may not feel totally sound at every part of a main dashboard. Plots seem pretty, they do, but it's more important to be able to read, analyze them, and reach for every insightful detail they contain. Ensuing chapters ought to hand over the essence of every method used, both for local and global explanations.</p>
+<p>Explainable Artificial Intelligence has never been an intelligible part of a Data Science ecosystem. Therefore, this tab is provided for any user who may not feel sound at every component of the main dashboard. Plots seem pretty, they do, but it's more important to be able to read, analyze them, and reach for insightful details they contain. Ensuing chapters ought to hand over the essence of every method used, both for local and global explanations.</p>
 
 <h3>Model performance and prediction</h3>
 
+As that's not a direct subcategory of XAI methods, it's worth adding some information about the model performance box, used methods, and plots' interpretations.
+
 <h3>Break Down plot</h3>
+
+<p>Break-Down is probably the easiest to interpret instance-level method by a standard user. It shows, similarly to the SHAP Values, the influence of particular feature values on the final prediction. Thanks to that method we can research how does the model react to specific variable values. </p>
+
+<p>At the top of the plot there is an average prediction for all observations. Below that, an algorithm calculates how that mean will alter when we fix values of consecutive features. The bottom of the plot is the provided record, so it's possible to analyze how the overall mean prediction changes over fixing ensuing variables until reaching the prepared observation.</p>
 
 <h3>SHAP Values plot</h3>
 
 <h3>Ceteris Paribus plot</h3>
 
+<p>CP Profiles somehow differ from the previous two instance-level methods. Here we can investigate how specific feature value modifications are going to alter the final prediction. Given the rest of the variables having fixed values, we can calculate the model's expected value (i.e., prediction) for an updated observation. As the Latin phrase 'ceteris paribus' goes: <i>other things held constant</i>, this updates happen only for an examined feature.</p>
+
 <h3>Feature Importance plot</h3>
+
+<p>Apart from sophisticated graph interpretations, users may want to look at the plot and, with a glance, understand relations between the model's predictions and dataset variables. Feature importance may be a solution for that case. Underlying math may cause a headache, but the results are easy to conceive. Every variable is given a value (loss function decrease), which indicates how essential that specific variable is for the model (and how much it relies on this feature).</p> 
 
 <h3>Partial Dependence plot</h3>
 
+<p>Second dataset-level method is an extension of Ceteris Paribus Profiles. It all comes down to calculating an expected value of the CP function, but in the vast majority of cases, it's not that simple, and a convenient estimator is used as a replacement. It calculates the mean of CP Profiles and can base on the group of the dataset observations or all of them.</p>
+
+<p>Unfortunately, this is the main reason why calculation time is longer when compared to instance-level Ceteris Paribus. Nevertheless, when the model bases on the data with interactions (i.e., when one feature depends on another (e.g., age and hair graying level)), it's crucial to check overall patterns rather than rely on single observation results.</p>
+
+<h3>Hungry for more?</h3>
+
+<p>We do realize that the above descriptions won't satisfy everyone. For those who made through all of the chapters and who want to learn even more about XAI, please find below the list as the very reliable sources of knowledge. You will find there great methods depictions, citations to further articles, code examples, and packages recommendations to fully explore the wonderful world of Explainable Artificial Intelligence!</p>
+
+<ul>
+	<li><a href="https://pbiecek.github.io/ema/">Explanatory Model Analysis (P. Biecek, T. Burzykowski)</a></li>
+	<li><a href="https://christophm.github.io/interpretable-ml-book/">Interpretable Machine Learning (C. Molnar)</a></li>
+</ul>
+
+</div>
