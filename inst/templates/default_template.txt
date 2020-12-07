@@ -368,10 +368,17 @@ server <- function(input, output, session) {
                         choices = levels(var_values),
                         selected = chosen_observation[[selected_columns[i]]])}
           else {
+            if(all(floor(var_values) == var_values)){
+              step <- 1
+            }
+            else{
+              step <- signif(min(abs(diff(unique(var_values)))))
+            }
             sliderInput(inputId = selected_columns[i],
                         label = selected_columns[i],
                         min = round(min(var_values, na.rm = TRUE)),
                         max = round(max(var_values, na.rm = TRUE)),
+                        step = step,
                         value = chosen_observation[[selected_columns[i]]])
           }
         })
