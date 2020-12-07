@@ -93,8 +93,8 @@ create_directory <- function(directory) {
 # Additionally, function checks whether all explainers are based on the same frame.
 get_explainers_data <- function(explainers) {
 
-  if(length(unique(lapply(explainers, function(x) { x$data }))) != 1) {
-    stop("Explainers unique datasets amount does not equal 1. You have to base explainers on the same data!")
+  if(length(unique(lapply(explainers, function(x) { colnames(x$data) }))) != 1) {
+    stop("Explainers unique datasets amount does not equal 1.\nYou have to base explainers on data with the same columns!")
   }
 
   return(explainers[[1]]$data)
