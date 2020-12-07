@@ -2,7 +2,7 @@
 % Please edit documentation in R/xai2shiny.R
 \name{xai2shiny}
 \alias{xai2shiny}
-\title{Create shiny app from an explainer}
+\title{Create Shiny app from an explainer}
 \usage{
 xai2shiny(..., directory = NULL, selected_variables = NULL, run = TRUE)
 }
@@ -13,10 +13,10 @@ xai2shiny(..., directory = NULL, selected_variables = NULL, run = TRUE)
 
 \item{selected_variables}{choosen variables for application start-up. There can be more added in the application interface through an input.}
 
-\item{run}{whether to run the shiny application instantly}
+\item{run}{whether to run the Shiny application instantly}
 }
 \description{
-This function creates a shiny application for explainers which are adapters for models created using the \code{DALEX} package.
+This function creates a \code{Shiny} application for explainers which are adapters for models created using the \code{DALEX} package.
 The application contains model performance and explanations to fully explore the model.
 }
 \examples{
@@ -24,7 +24,9 @@ The application contains model performance and explanations to fully explore the
 library("ranger")
 library("DALEX")
 model_rf <- ranger(survived ~ .,
-                   data = titanic_imputed)
+                   data = titanic_imputed,
+                   classification = TRUE,
+                   probability = TRUE)
 model_glm <- glm(survived ~ .,
                  data = titanic_imputed,
                  family = "binomial")
