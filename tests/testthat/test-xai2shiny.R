@@ -56,4 +56,36 @@ test_that("The selected_variables parameter functions properly",{
   })
 })
 
+test_that("Two explainers with different datasets will produce an error",{
+  explainer_glm2 <- DALEX::explain(mod_glm, data = data[,c(-7,-8)], y=data$survived)
+  expect_error({
+    xai2shiny(explainer_glm, explainer_glm2, run = FALSE)
+  })
+})
+
+test_that("Two model packages load properly",{
+  explainer_glm$model_info$package <- c("stats", "base")
+  expect_true({
+    xai2shiny(explainer_glm, run = FALSE)
+    TRUE
+  })
+})
+
+test_that("Models with model packages including space but created using H2O load properly",{
+  explainer_glm$model_info$package <- "H2O with space"
+  expect_true({
+    xai2shiny(explainer_glm, run = FALSE)
+    TRUE
+  })
+})
+
+
+test_that("Other models with model packages including space provide an error",{
+  explainer_glm$model_info$package <- "stats with space"
+  expect_error({
+    xai2shiny(explainer_glm, run = FALSE)
+  })
+})
+
+
 unlink("xai2shiny", recursive = TRUE)
