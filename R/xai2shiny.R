@@ -99,7 +99,8 @@ create_directory <- function(directory, override, verbose) {
   if(dir.exists(directory)) {
     if(override) {
       warning("Overiding existing directory with the newest application")
-      unlink(paste0(directory, "/*"))
+      unlink(directory, recursive = TRUE)
+      dir.create(directory)
     } else {
       stop('Directory of that location exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
     }
