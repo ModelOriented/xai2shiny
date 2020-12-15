@@ -7,6 +7,7 @@
 #' @param directory path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.
 #' @param selected_variables choosen variables for application start-up. There can be more added in the application interface through an input.
 #' @param run whether to run the Shiny application instantly
+#' @param override how to respond to a directory overriding case
 #' @param verbose whether to log in console internal function's steps
 #' @export
 #' @import shiny
@@ -45,7 +46,7 @@
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
 #' }
-xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, verbose = TRUE) {
+xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, override = TRUE, verbose = TRUE) {
 
   if(verbose == TRUE) {
     cat("Setting up new Shiny XAI application\n")
@@ -56,7 +57,7 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
   explainers <- args[names(args) == ""]
 
   # Creating necessary directory in order to drop generated app there
-  directory <- create_directory(directory, verbose)
+  directory <- create_directory(directory, override, verbose)
 
   # Fetching explainers data
   data <- get_explainers_data(explainers)
@@ -87,14 +88,24 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 
 
 # Creating directory at a given location. If not provided --- create temporary directory.
-create_directory <- function(directory, verbose) {
+create_directory <- function(directory, override, verbose) {
 
   if(is.null(directory)) directory <- tempdir()
   directory <- file.path(directory, 'xai2shiny')
-  if(!dir.exists(directory)) dir.create(directory)
 
   if(verbose == TRUE) {
     cat(paste0("\tApplication is setting up at: ", directory, "\n"))
+  }
+
+  if(dir.exists(directory)) {
+    if(override) {
+      warning("Overiding existing directory with the newest application")
+      unlink(paste0(directory, "/*"))
+    } else {
+      stop('Directory of that location exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
+    }
+  } else {
+    dir.create(directory)
   }
 
   return(directory)

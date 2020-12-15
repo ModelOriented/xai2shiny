@@ -9,6 +9,7 @@ xai2shiny(
   directory = NULL,
   selected_variables = NULL,
   run = TRUE,
+  override = TRUE,
   verbose = TRUE
 )
 }
@@ -20,6 +21,8 @@ xai2shiny(
 \item{selected_variables}{choosen variables for application start-up. There can be more added in the application interface through an input.}
 
 \item{run}{whether to run the Shiny application instantly}
+
+\item{override}{how to respond to a directory overriding case}
 
 \item{verbose}{whether to log in console internal function's steps}
 }
