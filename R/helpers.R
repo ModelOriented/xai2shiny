@@ -1,3 +1,4 @@
+# nocov start
 droplet_ip <- function(x) {
   v4 <- x$network$v4
   if (length(v4) == 0) {
@@ -14,5 +15,6 @@ droplet_ip <- function(x) {
   }
   ip
 }
+# nocov end
 
 cn <- function(x, y) if (nchar(y) == 0) y else paste0(x, y)
