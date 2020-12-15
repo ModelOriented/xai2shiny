@@ -7,7 +7,7 @@ data <- DALEX::titanic_imputed
 mod_glm <- glm(survived ~ ., data, family = "binomial")
 explainer_glm <- DALEX::explain(mod_glm, data = data[,-8], y=data$survived)
 
-xai2shiny(explainer_glm, directory = getwd(), run = FALSE)
+xai2shiny(explainer_glm, directory = paste0(getwd(), '/xai2shiny'), run = FALSE)
 
 test_that("All files are created",{
   expect_true("xai2shiny" %in% list.files())
@@ -51,7 +51,7 @@ app$stop()
 
 test_that("The selected_variables parameter functions properly",{
   expect_true({
-    xai2shiny(explainer_glm, selected_variables = "age", run = FALSE)
+    xai2shiny(explainer_glm, selected_variables = "age", directory = paste0(getwd(), '/xai2shiny_test2'), run = FALSE)
     TRUE
   })
 })
@@ -59,14 +59,14 @@ test_that("The selected_variables parameter functions properly",{
 test_that("Two explainers with different datasets will produce an error",{
   explainer_glm2 <- DALEX::explain(mod_glm, data = data[,c(-7,-8)], y=data$survived)
   expect_error({
-    xai2shiny(explainer_glm, explainer_glm2, run = FALSE)
+    xai2shiny(explainer_glm, explainer_glm2, directory = paste0(getwd(), '/xai2shiny_test3'), run = FALSE)
   })
 })
 
 test_that("Two model packages load properly",{
   explainer_glm$model_info$package <- c("stats", "base")
   expect_true({
-    xai2shiny(explainer_glm, run = FALSE)
+    xai2shiny(explainer_glm, directory = paste0(getwd(), '/xai2shiny_test4'), run = FALSE)
     TRUE
   })
 })
@@ -74,18 +74,23 @@ test_that("Two model packages load properly",{
 test_that("Models with model packages including space but created using H2O load properly",{
   explainer_glm$model_info$package <- "H2O with space"
   expect_true({
-    xai2shiny(explainer_glm, run = FALSE)
+    xai2shiny(explainer_glm, directory = paste0(getwd(), '/xai2shiny_test5'), run = FALSE)
     TRUE
   })
 })
 
-
 test_that("Other models with model packages including space provide an error",{
   explainer_glm$model_info$package <- "stats with space"
   expect_error({
-    xai2shiny(explainer_glm, run = FALSE)
+    xai2shiny(explainer_glm, directory = paste0(getwd(), '/xai2shiny_test6'), run = FALSE)
   })
 })
 
 
+
 unlink("xai2shiny", recursive = TRUE)
+unlink("xai2shiny_test2", recursive = TRUE)
+unlink("xai2shiny_test3", recursive = TRUE)
+unlink("xai2shiny_test4", recursive = TRUE)
+unlink("xai2shiny_test5", recursive = TRUE)
+unlink("xai2shiny_test6", recursive = TRUE)

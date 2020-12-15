@@ -90,8 +90,7 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 # Creating directory at a given location. If not provided --- create temporary directory.
 create_directory <- function(directory, override, verbose) {
 
-  if(is.null(directory)) directory <- tempdir()
-  directory <- file.path(directory, 'xai2shiny')
+  if(is.null(directory)) directory <- file.path(tempdir(), 'xai2shiny')
 
   if(verbose == TRUE) {
     cat(paste0("\tApplication is setting up at: ", directory, "\n"))
