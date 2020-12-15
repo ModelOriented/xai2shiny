@@ -7,6 +7,7 @@
 #' @param directory path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.
 #' @param selected_variables choosen variables for application start-up. There can be more added in the application interface through an input.
 #' @param run whether to run the Shiny application instantly
+#' @param verbose whether to log in console internal function's steps
 #' @export
 #' @import shiny
 #' @import shinydashboard
@@ -44,32 +45,40 @@
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
 #' }
-xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE) {
+xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, verbose = TRUE) {
+
+  if(verbose == TRUE) {
+    cat("Setting up new Shiny XAI application\n")
+  }
 
   # Obtaining explainers
   args <- list(..., version = 1.0)
   explainers <- args[names(args) == ""]
 
   # Creating necessary directory in order to drop generated app there
-  directory <- create_directory(directory)
+  directory <- create_directory(directory, verbose)
 
   # Fetching explainers data
   data <- get_explainers_data(explainers)
 
   # Creating `cols` and `selected_variables` objects (if not specified)
-  objects_to_template <- generate_cols_and_variables(data, selected_variables)
+  objects_to_template <- generate_cols_and_variables(data, selected_variables, verbose)
 
   # Observation string used further in template
-  objects_to_template <- create_observation(data, objects_to_template)
+  objects_to_template <- create_observation(data, objects_to_template, verbose)
 
   # Saving all explainers
-  objects_to_template <- save_explainers(explainers, directory, objects_to_template)
+  objects_to_template <- save_explainers(explainers, directory, objects_to_template, verbose)
 
   # Filling template
-  template_text_filled <- generate_template(objects_to_template, explainers)
+  template_text_filled <- fill_template(objects_to_template, explainers, verbose)
 
   # Saving filled template as Shiny application and .html file with XAI tab content
-  save_files(directory, template_text_filled)
+  save_files(directory, template_text_filled, verbose)
+
+  if(verbose == TRUE) {
+    cat("Application setup ended\n")
+  }
 
   # Additional app running
   if(run) shiny::runApp(directory)
@@ -78,11 +87,15 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 
 
 # Creating directory at a given location. If not provided --- create temporary directory.
-create_directory <- function(directory) {
+create_directory <- function(directory, verbose) {
 
   if(is.null(directory)) directory <- tempdir()
   directory <- file.path(directory, 'xai2shiny')
   if(!dir.exists(directory)) dir.create(directory)
+
+  if(verbose == TRUE) {
+    cat(paste0("\tApplication is setting up at: ", directory, "\n"))
+  }
 
   return(directory)
 }
@@ -105,7 +118,12 @@ get_explainers_data <- function(explainers) {
 # Creating `cols` and `selected_variables` objects for further calculations.
 # Checking for variables with just one unique value and ignoring them.
 # `cols` objects is being created while `selected_variables`, if NULL, is first element of `cols`.
-generate_cols_and_variables <- function(data, selected_variables) {
+generate_cols_and_variables <- function(data, selected_variables, verbose) {
+
+  if(verbose == TRUE) {
+    cat("\tGenerating internal Shiny app objects, part 1.\n")
+  }
+
   if(length(which(apply(data, 2, function(x) length(unique(x))) == 1)) > 0) {
     cols <- colnames(data)[- which(apply(data, 2, function(x) length(unique(x))) == 1)]
   }
@@ -136,7 +154,11 @@ generate_cols_and_variables <- function(data, selected_variables) {
 
 
 # Auxiliary function to create expression string used in Shiny application data input.
-create_observation <- function(data, objects_to_template) {
+create_observation <- function(data, objects_to_template, verbose) {
+
+  if(verbose == TRUE) {
+    cat("\tGenerating internal Shiny app objects, part 2.\n")
+  }
 
   vars <- lapply(data, class)
   t_vars <- as.data.frame(cbind(names = names(vars), type = vars))
@@ -157,7 +179,12 @@ create_observation <- function(data, objects_to_template) {
 
 
 # Looping through all explainers to save them into files.
-save_explainers <- function(explainers, directory, objects_to_template) {
+save_explainers <- function(explainers, directory, objects_to_template, verbose) {
+
+  if(verbose == TRUE) {
+    cat("\tSaving explainers files to the final directory\n")
+    cat("\tGenerating internal Shiny app objects, part 3.\n")
+  }
 
   buttons <- ''
   explainers_reactive <- ''
@@ -202,6 +229,10 @@ save_explainers <- function(explainers, directory, objects_to_template) {
     explainers_static <- paste0(explainers_static, "\n", explainer_static)
   }
 
+  if(verbose == TRUE) {
+    cat("\tExplainers saved properly\n")
+  }
+
   objects_to_template['libs'] <- libs
   objects_to_template['buttons'] <- buttons
   objects_to_template['explainers_reactive'] <- explainers_reactive
@@ -213,7 +244,11 @@ save_explainers <- function(explainers, directory, objects_to_template) {
 
 
 # Generating template text by filling all the necessary placeholders with created data.
-generate_template <- function(objects_to_template, explainers) {
+fill_template <- function(objects_to_template, explainers, verbose) {
+
+  if(verbose == TRUE) {
+    cat("\tGenerating Shiny application by filling the template file\n")
+  }
 
   # Reading necessary files: template and static text for prediction description
   static_text <- read.csv(system.file("extdata", "app_static_text.csv", package="xai2shiny"), sep = ';')
@@ -235,7 +270,12 @@ generate_template <- function(objects_to_template, explainers) {
 
 
 # Saving filled template text to the file as a Shiny app and XAI tab content
-save_files <- function(directory, template_text_filled) {
+save_files <- function(directory, template_text_filled, verbose) {
+
+  if(verbose == TRUE) {
+    cat("\tSaving application file\n")
+  }
+
   # Saving Shiny app
   template_file_path <- paste0(directory, "/app.R")
   file.create(template_file_path)
