@@ -1,5 +1,5 @@
 <div>
-	
+
 	<h1>Learn more about XAI</h1>
 
 <p>Explainable Artificial Intelligence has never been an intelligible part of a Data Science ecosystem. Therefore, this tab is provided for any user who may not feel sound at every component of the main dashboard. Plots seem pretty, they do, but it's more important to be able to read, analyze them, and reach for insightful details they contain. Ensuing chapters ought to hand over the essence of every method used, both for local and global explanations.</p>
@@ -16,13 +16,17 @@ As that's not a direct subcategory of XAI methods, it's worth adding some inform
 
 <h3>SHAP Values plot</h3>
 
+<p>SHAP plot is another local explanation method which depicts the influence of specific features on the precition. It is based on  the classic Shapley values from game theory and is calculated longer than Break Down profiles. If a model is not too complicated, it is usually worth it to compare the results provided by Break Down plots with SHAP plots and base the conclusions on both of them.</p>
+
+<p>Unlike the Break Down profile, the plot does not contain the intercept value and only shows the contribution to the prediction of each variable. The boxplots found on each bar for a specific observation depict the uncertanity of attribution.</p>
+
 <h3>Ceteris Paribus plot</h3>
 
 <p>CP Profiles somehow differ from the previous two instance-level methods. Here we can investigate how specific feature value modifications are going to alter the final prediction. Given the rest of the variables having fixed values, we can calculate the model's expected value (i.e., prediction) for an updated observation. As the Latin phrase 'ceteris paribus' goes: <i>other things held constant</i>, this updates happen only for an examined feature.</p>
 
 <h3>Feature Importance plot</h3>
 
-<p>Apart from sophisticated graph interpretations, users may want to look at the plot and, with a glance, understand relations between the model's predictions and dataset variables. Feature importance may be a solution for that case. Underlying math may cause a headache, but the results are easy to conceive. Every variable is given a value (loss function decrease), which indicates how essential that specific variable is for the model (and how much it relies on this feature).</p> 
+<p>Apart from sophisticated graph interpretations, users may want to look at the plot and, with a glance, understand relations between the model's predictions and dataset variables. Feature importance may be a solution for that case. Underlying math may cause a headache, but the results are easy to conceive. Every variable is given a value (loss function decrease), which indicates how essential that specific variable is for the model (and how much it relies on this feature).</p>
 
 <h3>Partial Dependence plot</h3>
 
