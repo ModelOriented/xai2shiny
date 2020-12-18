@@ -19,7 +19,7 @@ devtools::install_github("ModelOriented/xai2shiny")
 ## Example
 
 Package usage example will be based on the *titanic* dataset, including GLM and Random Forest models.
-[The final application created using the scipt below.](http://138.68.225.150:2211/xai2shiny/)
+[The final application created using the scipt below.](http://206.189.209.54:2211/Xai2shinyWorkingExample/)
 First, it is necessary to have any explainers created whatsoever:
 
 ```
