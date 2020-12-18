@@ -113,6 +113,9 @@ ui <- dashboardPage(
     # Main dashboard body
     # Includes both explanations and XAI resources tabs
     dashboardBody(
+        # Make dashboard background color overflow automaticaly to content
+        tags$head(tags$style(HTML('.content-wrapper { overflow: auto; }'))),
+        # Use shinyjs to show/hide objects
         shinyjs::useShinyjs(),
         tabItems(
 
@@ -232,7 +235,12 @@ ui <- dashboardPage(
             tabItem(tabName = "xai_resources",
                     column(7, includeHTML(system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny")))
             )
-        )
+        ),
+
+        tags$footer(style = "width: 100%; background-color: #605ca8; text-align: center; color: white; font-size: 115%;
+                            padding: 5px 10px 1px 10px; border-radius: 10px; box-shadow: 5px 5px 15px -5px #444;",
+                    HTML('<p>App built with: <a style="color: #c8c3dc;" href="https://github.com/ModelOriented/xai2shiny">xai2shiny</a></p>'),
+                    HTML(paste0("<p>Last update date: ", Sys.time(), "</p>")))
 
     )
 )
@@ -288,11 +296,16 @@ server <- function(input, output, session) {
 
     # Plotting
     output$plot_bd <- renderPlot({
-        plot(pp())
+        if(input$pptype == "shap"){
+          plot(pp()) + ggplot2::ggtitle("SHAP\n")
+        }
+        else{
+          plot(pp())
+        }
     })
 
     output$plot_cp <- renderPlot({
-        plot(cp(), variables = input$cp1)
+        plot(cp(), variables = input$cp1) + ggplot2::labs(subtitle="")
     })
 
     output$plot_modelperf <- renderPlot({
@@ -307,12 +320,12 @@ server <- function(input, output, session) {
 
     output$plot_fi <- renderPlot({
         mp <- model_parts(exp$data)
-        plot(mp)
+        plot(mp) + ggplot2::labs(subtitle = "")
     })
 
     output$plot_pdp <- renderPlot({
         pdp <- model_profile(exp$data, variables = input$pdp1)
-        plot(pdp)
+        plot(pdp) + ggplot2::labs(subtitle = "")
     })
 
     output$variable_cp <- renderUI({

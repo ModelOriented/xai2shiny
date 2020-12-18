@@ -1,4 +1,8 @@
 # nocov start
+#' @noRd
+#' @title droplet_ip
+#' @description This funciton returns the IP adress of a droplet
+#' @param x droplet - selected droplet
 droplet_ip <- function(x) {
   v4 <- x$network$v4
   if (length(v4) == 0) {
@@ -17,4 +21,9 @@ droplet_ip <- function(x) {
 }
 # nocov end
 
+#' @noRd
+#' @title cn
+#' @description Simple helper function
+#' @param x string
+#' @param y string
 cn <- function(x, y) if (nchar(y) == 0) y else paste0(x, y)

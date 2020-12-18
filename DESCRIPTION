@@ -20,7 +20,8 @@ Imports:
     shinyWidgets,
     shinycssloaders (>= 1.0.0),
     whisker,
-    readr
+    readr,
+    ggplot2
 Suggests: 
     testthat,
     shinytest,
