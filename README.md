@@ -50,7 +50,7 @@ Then all is left to do is to run:
 
 ```
 xai2shiny::xai2shiny(explainer_glm, explainer_rf, 
-                     directory = 'D:/Studia/test',
+                     directory = './',
                      selected_variables = c('gender', 'age'),
                      run = FALSE)
 ```
