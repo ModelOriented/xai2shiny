@@ -57,25 +57,21 @@ ui <- dashboardPage(
 
             # Checkboxes
             checkboxGroupButtons(
-              inputId = "selected_explanations",
+              inputId = "selected_features",
               label = "Select explanation types:",
-              choices = c("Local", "Global"),
-              selected = "Local",
+              choices = c("Local explanations", "Global explanations", "Model performance", "Text description"),
+              selected = c("Local explanations", "Model performance"),
+              direction = "vertical",
               justified = TRUE,
               status = "primary",
               checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon"))
             ),
 
             # Additional styling
-            tags$script("$(\"input:checkbox[name='selected_explanations'][value='Local']\").parent().css('background-color', '#483D8B');"),
-            tags$script("$(\"input:checkbox[name='selected_explanations'][value='Global']\").parent().css('background-color', '#1958a6');"),
-
-            # Checkbox for extra text next to explanations (fetched from DALEX package)
-            prettyCheckbox(
-              inputId = "text_yesno",
-              label = "Show text description",
-              status = "primary"
-            ),
+            tags$script("$(\"input:checkbox[name='selected_features'][value='Local explanations']\").parent().css('background-color', '#483D8B');"),
+            tags$script("$(\"input:checkbox[name='selected_features'][value='Global explanations']\").parent().css('background-color', '#1958a6');"),
+            tags$script("$(\"input:checkbox[name='selected_features'][value='Model performance']\").parent().css('background-color', '#634A87');"),
+            tags$script("$(\"input:checkbox[name='selected_features'][value='Text description']\").parent().css('background-color', '#46425E');"),
 
             pickerInput(
               inputId = "selected_columns",
@@ -121,35 +117,74 @@ ui <- dashboardPage(
 
             # Explanations tab
             tabItem(tabName = "dashboard",
+
+                    fluidRow(
+                        hidden(
+                          div(id = "global",
+
+                            # Global: Feature importance
+                            box(title = p(id = "tab5", "Model Parts",
+                                          tags$span(icon("info-circle"), id = "icon_feature_importance", style = "color: #C0C0C0;")),
+                                bsPopover("icon_feature_importance",
+                                          title = "What is Model Parts?",
+                                          content = paste("By using different methods it is able to measure how much models rely on given variables.",
+                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                          placement = "right",
+                                          options = list(container = 'body')),
+                                background = "blue",
+                                solidHeader = TRUE,
+                                collapsible = TRUE,
+                                width = 6,
+                                height = 350,
+                                withSpinner(plotOutput("plot_fi", height = 260), hide.ui = FALSE)),
+
+                            # Global: Partial-Depencende plot
+                            box(title = p(id = "tab6", "Model Profile",
+                                          tags$span(icon("info-circle"), id = "icon_model_profile", style = "color: #C0C0C0;")),
+                                bsPopover("icon_model_profile",
+                                          title = "What is Model Profile?",
+                                          content = paste('Partial Dependence is an expected value of Ceteris Paribus (Predict Profile) function across whole dataset.',
+                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                          placement = "right",
+                                          options = list(container = 'body')),
+                                background = "blue", solidHeader = TRUE,
+                                collapsible = TRUE,
+                                width = 6,
+                                height = 350,
+                                column(width = 3, uiOutput("variable_pdp")),
+                                column(width = 9, withSpinner(plotOutput("plot_pdp", height = 260), hide.ui = FALSE)))
+                    ))),
+
                     fluidRow(
 
                         # Prediction & Model performance
-                        column(width = 4,
-                               column(width = 12,
-                                    box(title = p(id = "tab1", "Prediction"),
-                                        background = "purple",
-                                        solidHeader = TRUE,
-                                        collapsible = TRUE,
-                                        width = 800,
-                                        height = 130,
-                                        p({{{text_prediction}}}),
-                                        withSpinner(uiOutput("text_pred"), hide.ui = FALSE)),
-                                    box(title = p(id = "tab2", "Model Performance",
-                                                  tags$span(icon("info-circle"), id = "icon_performance", style = "color: #C0C0C0;")),
-                                        bsPopover("icon_performance",
-                                                  title = "What is Model Performance?",
-                                                  content = paste('Below you can find one of sound methods used to measure model`s quality (respecting regression / classification division).',
-                                                                  "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
-                                                  placement = "right",
-                                                  options = list(container = 'body')),
-                                        background = "blue",
-                                        solidHeader = TRUE,
-                                        collapsible = TRUE,
-                                        width = 800,
-                                        height = NULL,
-                                        withSpinner(plotOutput("plot_modelperf", height = 360), hide.ui = FALSE),
-                                        htmlOutput("text_performance"))
-                                    )),
+                        div(id = "model_perf",
+                          column(width = 4,
+                                  box(title = p(id = "tab1", "Prediction"),
+                                      background = "purple",
+                                      solidHeader = TRUE,
+                                      collapsible = TRUE,
+                                      width = 800,
+                                      height = 130,
+                                      p({{{text_prediction}}}),
+                                      withSpinner(uiOutput("text_pred"), hide.ui = FALSE)),
+                                  box(title = p(id = "tab2", "Model Performance",
+                                                tags$span(icon("info-circle"), id = "icon_performance", style = "color: #C0C0C0;")),
+                                      bsPopover("icon_performance",
+                                                title = "What is Model Performance?",
+                                                content = paste('Below you can find one of sound methods used to measure model`s quality (respecting regression / classification division).',
+                                                                "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
+                                                placement = "right",
+                                                options = list(container = 'body')),
+                                      background = "blue",
+                                      solidHeader = TRUE,
+                                      collapsible = TRUE,
+                                      width = 800,
+                                      height = NULL,
+                                      withSpinner(plotOutput("plot_modelperf", height = 360), hide.ui = FALSE),
+                                      htmlOutput("text_performance"))
+                                  )
+                        ),
 
                         div(id = "local",
 
@@ -192,42 +227,6 @@ ui <- dashboardPage(
                               withSpinner(plotOutput("plot_cp", height = 400), hide.ui = FALSE),
                               textOutput("text_ceterisparibus"))
                     )),
-                    fluidRow(
-                        hidden(
-                          div(id = "global",
-
-                            # Global: Feature importance
-                            box(title = p(id = "tab5", "Model Parts",
-                                          tags$span(icon("info-circle"), id = "icon_feature_importance", style = "color: #C0C0C0;")),
-                                bsPopover("icon_feature_importance",
-                                          title = "What is Model Parts?",
-                                          content = paste("By using different methods it is able to measure how much models rely on given variables.",
-                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
-                                          placement = "right",
-                                          options = list(container = 'body')),
-                                background = "blue",
-                                solidHeader = TRUE,
-                                collapsible = TRUE,
-                                width = 6,
-                                height = 350,
-                                withSpinner(plotOutput("plot_fi", height = 260), hide.ui = FALSE)),
-
-                            # Global: Partial-Depencende plot
-                            box(title = p(id = "tab6", "Model Profile",
-                                          tags$span(icon("info-circle"), id = "icon_model_profile", style = "color: #C0C0C0;")),
-                                bsPopover("icon_model_profile",
-                                          title = "What is Model Profile?",
-                                          content = paste('Partial Dependence is an expected value of Ceteris Paribus (Predict Profile) function across whole dataset.',
-                                                          "Check \"Learn more about XAI\" tab for more!", sep = "<br>"),
-                                          placement = "right",
-                                          options = list(container = 'body')),
-                                background = "blue", solidHeader = TRUE,
-                                collapsible = TRUE,
-                                width = 6,
-                                height = 350,
-                                column(width = 3, uiOutput("variable_pdp")),
-                                column(width = 9, withSpinner(plotOutput("plot_pdp", height = 260), hide.ui = FALSE)))
-                    ))),
 
                     tags$footer(style = "width: 100%; background-color: #605ca8; text-align: center; color: white; font-size: 115%;
                             padding: 5px 10px 1px 10px; border-radius: 10px; box-shadow: 5px 5px 15px -5px #444;",
@@ -267,10 +266,10 @@ server <- function(input, output, session) {
 
     # Rendering DALEX text describing explanations performance
     output$text_pred <- renderUI({ strong(paste0(pred())) })
-    output$text_predictprofile <- renderText({ if(input$text_yesno) iBreakDown::describe(pp()) else "" })
-    output$text_ceterisparibus <- renderText({ if(input$text_yesno) ingredients::describe(cp()) else "" })
+    output$text_predictprofile <- renderText({ if("Text description" %in% input$selected_features) iBreakDown::describe(pp()) else "" })
+    output$text_ceterisparibus <- renderText({ if("Text description" %in% input$selected_features) ingredients::describe(cp()) else "" })
     output$text_performance <- renderText({
-      if(input$text_yesno){
+      if("Text description" %in% input$selected_features){
           perf <- model_performance(exp$data)
           if(perf$type == "regression") {
               paste0("Performance measures for ", perf$type,
@@ -341,29 +340,33 @@ server <- function(input, output, session) {
                   selected = input$selected_columns[1])
     })
 
-    # Logic based on selected explanations types (local / global)
-    observeEvent(input$selected_explanations, {
+    # Logic based on selected features (local/global explanations, model performance, text description)
+    observe({
+      if (is.null(input$selected_features) ){
+        shinyjs::hide("local")
+        shinyjs::hide("global")
+        shinyjs::hide("model_perf")
+      }
+    })
 
-        # No explanations chosen
-        if (is.null(input$selected_explanations) ){
+    observeEvent(input$selected_features, {
+
+        if("Local explanations" %in% input$selected_features) {
+          shinyjs::show("local")
+        } else {
           shinyjs::hide("local")
+        }
+
+        if("Global explanations" %in% input$selected_features) {
+          shinyjs::show("global")
+        } else {
           shinyjs::hide("global")
         }
 
-        # Only one explanation chosen
-        if (length(input$selected_explanations) == 1){
-          if (input$selected_explanations == "Local"){
-            shinyjs::show("local")
-            shinyjs::hide("global")
-          } else if (input$selected_explanations == "Global"){
-            shinyjs::hide("local")
-            shinyjs::show("global")
-          }
-
-        # Both explanations types chosen
-        } else{
-          shinyjs::show("local")
-          shinyjs::show("global")
+        if("Model performance" %in% input$selected_features) {
+          shinyjs::show("model_perf")
+        } else {
+          shinyjs::hide("model_perf")
         }
     })
 
