@@ -96,7 +96,16 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 #' @param verbose bool - if text information should be displayed in console
 create_directory <- function(directory, override, verbose) {
 
-  if(is.null(directory)) directory <- file.path(tempdir(), 'xai2shiny')
+  if(is.null(directory) | length(nchar(directory)) == 0) {
+
+    cat("You passed no explicit directory location. If you want to specify it, please pass it now.\n")
+    cat("In case of an empty string, temporary directory is going to be set up\n")
+    directory <- readline("Please provide the final location: ")
+
+    if(nchar(directory) == 0) {
+      directory <- file.path(tempdir(), 'xai2shiny')
+    }
+  }
 
   if(verbose == TRUE) {
     cat(paste0("\tApplication is setting up at: ", directory, "\n"))
