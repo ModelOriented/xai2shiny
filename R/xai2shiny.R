@@ -115,7 +115,7 @@ create_directory <- function(directory, override, verbose) {
         stop("Specified directory exists. Please delete it by yourself or point to a different location.")
       }
     } else {
-      stop('Directory of that location exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
+      stop('Specified directory exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
     }
   } else {
     dir.create(directory)
