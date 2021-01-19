@@ -105,8 +105,15 @@ create_directory <- function(directory, override, verbose) {
   if(dir.exists(directory)) {
     if(override) {
       warning("Overiding existing directory with the newest application")
-      unlink(directory, recursive = TRUE)
-      dir.create(directory)
+      cat(paste0("Caution! You are about to delete the directory content (", directory, ").\n"))
+      if(readline("Are you sure? [y / n]: ") == "y") {
+        suppressWarnings({
+          unlink(directory, recursive = TRUE)
+          dir.create(directory)
+        })
+      } else {
+        stop("Specified directory exists. Please delete it by yourself or point to a different location.")
+      }
     } else {
       stop('Directory of that location exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
     }
