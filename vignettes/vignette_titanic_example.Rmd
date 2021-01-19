@@ -1,0 +1,111 @@
+---
+title: "xai2shiny introduction: Titanic dataset with multiple models"
+author: Adam Rydelek, Mateusz Polakowski
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{vignette_titanic_rf_glm_h2o}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+library("xai2shiny")
+```
+
+# Titanic dataset
+
+`DALEX` packages provides an imputed version of a common classification-oriented dataset - `titanic` (data was copied from the `stablelearner` package).
+Let's see a sample of observations:
+
+```{r}
+library("DALEX")
+head(titanic_imputed, 3)
+```
+
+# Models to compare
+
+Package allows to pass multiple models from different packages to the main function, so why not create some:
+
+```{r}
+library("ranger")
+
+model_rf <- ranger(survived ~ .,
+                   data = titanic_imputed,
+                   classification = TRUE,
+                   probability = TRUE)
+model_glm <- glm(survived ~ .,
+                 data = titanic_imputed,
+                 family = "binomial")
+```
+
+# Explainers based on models
+
+In fact, `xai2shiny` function accepts only explainers, i.e. `DALEX` special objects basing on provided models. Let's create all necessary explainers:
+
+```{r results='hide'}
+explainer_rf <- explain(model_rf,
+                        data = titanic_imputed[,-8],
+                        y = titanic_imputed$survived)
+explainer_glm <- explain(model_glm,
+                         data = titanic_imputed[,-8],
+                         y = titanic_imputed$survived)
+```
+
+# Shiny application
+
+After that, the only thing left to do is to generate an app and run it:
+
+```{r eval=FALSE}
+xai2shiny(explainer_rf, explainer_glm, directory = './', run = TRUE)
+```
+
+# Cloud deployment
+
+Further cloud deployment can be done in 2 simple steps (see [README example](https://github.com/ModelOriented/xai2shiny/blob/master/README.md) for details):
+
+```{r eval=FALSE}
+xai2shiny::cloud_setup()
+my_droplet_id <- 1 # Compare it to your DigitalOcean account and set a proper ID 
+deploy_shiny(droplet = my_droplet_id, path = './xai2shiny', packages = "ranger")
+```
+
+# External package's model
+
+As `xai2shiny` covers as many external models sources as `DALEX` and `DALEXtra`, let's consider widely known `mlr3` package:
+
+```{r eval=FALSE}
+library("DALEXtra")
+library("mlr3")
+library("mlr3learners")
+
+titanic <- titanic_imputed
+titanic[, 'survived'] <- as.factor(titanic[, 'survived'])
+
+task <- TaskClassif$new(id = 'titanic', 
+                        backend = titanic, 
+                        target = "survived", 
+                        positive = '1')
+
+learner <- mlr_learners$get('classif.log_reg')
+learner$predict_type = "prob"
+
+train_set = sample(task$nrow, 0.8 * task$nrow)
+test_set = setdiff(seq_len(task$nrow), train_set)
+
+learner$train(task, row_ids = train_set)
+explainer_mlr <- explain_mlr3(learner,
+                              data = titanic[,-8], 
+                              y = as.numeric(as.character(titanic$survived)),
+                              label = "mlr3 model")
+xai2shiny(explainer_mlr, directory = "./", run = FALSE)
+```
