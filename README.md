@@ -105,3 +105,7 @@ At the time it supports such functionalities for **multiple models in one applic
 4. **Global explanations:**
    * Feature importance plots
    * Partial Dependence plots
+
+## Acknowledgments
+
+Work on this package was financially supported by the Polish National Science Centre under Opus Grant number 2017/27/B/ST6/0130.
