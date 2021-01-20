@@ -16,8 +16,18 @@ library("ggplot2")
 # Assuming data is the same among explainers, so loading it from the first one is acceptable in this case
 data <- explainer1$data
 
-# TODO: create observation based on average data for each variable
-chosen_observation <- data[1,-8]
+# Observation created based on average (numeric features) and
+# most frequent (categorical features) data for each column
+temp_data <- data[{{{cols}}}]
+chosen_observation <- suppressWarnings({as.data.frame(t(sapply(temp_data, function(x) {round(mean(x), 2)} )))})
+chosen_observation_cat_help <- as.data.frame(t(sapply(temp_data, function(x) {names(sort(table(x), decreasing = T, na.last = T)[1])})))
+
+# Filling NA values for categorical features
+for(name in names(chosen_observation)) {
+  if(is.na(chosen_observation[name])) {
+    chosen_observation[name] <- chosen_observation_cat_help[name]
+  }
+}
 
 # Creating proper dropdown menu to choose explainers from
 dropdownActionMenu <- function (..., title=NULL, icon = NULL, .list = NULL, header=NULL) {
