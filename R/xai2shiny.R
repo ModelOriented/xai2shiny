@@ -96,7 +96,16 @@ xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TR
 #' @param verbose bool - if text information should be displayed in console
 create_directory <- function(directory, override, verbose) {
 
-  if(is.null(directory)) directory <- file.path(tempdir(), 'xai2shiny')
+  if(is.null(directory) | length(nchar(directory)) == 0) {
+
+    cat("You passed no explicit directory location. If you want to specify it, please pass it now.\n")
+    cat("In case of an empty string, temporary directory is going to be set up\n")
+    directory <- readline("Please provide the final location: ")
+
+    if(nchar(directory) == 0) {
+      directory <- file.path(tempdir(), 'xai2shiny')
+    }
+  }
 
   if(verbose == TRUE) {
     cat(paste0("\tApplication is setting up at: ", directory, "\n"))
@@ -105,10 +114,17 @@ create_directory <- function(directory, override, verbose) {
   if(dir.exists(directory)) {
     if(override) {
       warning("Overiding existing directory with the newest application")
-      unlink(directory, recursive = TRUE)
-      dir.create(directory)
+      cat(paste0("Caution! You are about to delete the directory content (", directory, ").\n"))
+      if(readline("Are you sure? [y / n]: ") == "y") {
+        suppressWarnings({
+          unlink(directory, recursive = TRUE)
+          dir.create(directory)
+        })
+      } else {
+        stop("Specified directory exists. Please delete it by yourself or point to a different location.")
+      }
     } else {
-      stop('Directory of that location exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
+      stop('Specified directory exists and override is set to FALSE. Set it to TRUE or change xai2shiny files destination')
     }
   } else {
     dir.create(directory)
