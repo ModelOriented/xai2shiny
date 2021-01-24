@@ -76,7 +76,7 @@ Further cloud deployment can be done in 2 simple steps (see [README example](htt
 ```{r eval=FALSE}
 xai2shiny::cloud_setup()
 my_droplet_id <- 1 # Compare it to your DigitalOcean account and set a proper ID 
-deploy_shiny(droplet = my_droplet_id, path = './xai2shiny', packages = "ranger")
+deploy_shiny(droplet = my_droplet_id, directory = './xai2shiny', packages = "ranger")
 ```
 
 # External package's model
