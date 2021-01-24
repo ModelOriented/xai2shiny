@@ -20,7 +20,7 @@ app <- ShinyDriver$new("xai2shiny/")
 test_that("The application runs",{
   output_pred <- app$getValue(name = "text_pred")
   pred_base <- substr(output_pred, 9, 12)
-  expect_equal(pred_base, "0.06")
+  expect_equal(pred_base, "0.08")
 
   output_bd_description <- app$getValue(name = "text_predictprofile")
   expect_equal(output_bd_description, "")
@@ -32,7 +32,7 @@ test_that("The application runs",{
   expect_equal(output_performance, "")
 
   # Modyfing text checkbox
-  app$setInputs(text_yesno = TRUE)
+  app$setInputs(selected_features = c("Local explanations", "Model performance", "Text description"))
 
   output_bd_description <- app$getValue(name = "text_predictprofile")
   bd_description_base <- substr(output_bd_description, 1, 2)
