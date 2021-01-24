@@ -47,7 +47,7 @@
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
 #' }
-xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, override = TRUE, verbose = TRUE) {
+xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, override = FALSE, verbose = TRUE) {
 
   if(verbose == TRUE) {
     cat("Setting up new Shiny XAI application\n")
