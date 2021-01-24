@@ -9,7 +9,7 @@ xai2shiny(
   directory = NULL,
   selected_variables = NULL,
   run = TRUE,
-  override = TRUE,
+  override = FALSE,
   verbose = TRUE
 )
 }
