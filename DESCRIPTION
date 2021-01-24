@@ -1,9 +1,9 @@
 Package: xai2shiny
 Type: Package
 Title: Creates Shiny Application From A DALEX Explainer
-Version: 1.0.0
-Authors@R: c(person("Rydelek", "Adam", email = "rydeleka@student.mini.pw.edu.pl", role = c("aut", "cre")),
-    person("Mateusz", "Polakowski", email = "polakowskim@student.mini.pw.edu.pl", role = "aut"))
+Version: 1.1.0
+Authors@R: c(person("Rydelek", "Adam", email = "adam.rydelek@gmail.com", role = c("aut", "cre")),
+    person("Mateusz", "Polakowski", email = "mckraqs@gmail.com", role = "aut"))
 Description: The package is used to create Shiny applications that contain all crucial information about models such as their performance and model explanations. The application is created based on one or many explainers which are adapters for models created by the DALEX package.
 License: GPL
 Encoding: UTF-8

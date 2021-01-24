@@ -6,10 +6,9 @@
 \usage{
 deploy_shiny(
   droplet,
-  path,
+  directory,
   packages = "stats",
   port = 80,
-  dir = "",
   browse = TRUE,
   ssh_user = "root"
 )
@@ -17,17 +16,15 @@ deploy_shiny(
 \arguments{
 \item{droplet}{the droplet's id or droplet's object. The IP can be checked by running \code{analogsea::droplets()}.}
 
-\item{path}{path to the \code{Shiny} application (\code{xai2shiny} application).}
+\item{directory}{path to the directory containing \code{Shiny} application (\code{xai2shiny} application).}
 
 \item{packages}{vector of packages (package names) that are needed for the application to run.}
 
 \item{port}{port at which the application will run.}
 
-\item{dir}{where to deploy an app, urgent to run docklet properly}
-
 \item{browse}{a boolean, which indicates whether open the app on the web after deploying}
 
-\item{ssh_user}{the name of ssh console user, urgent to run docklet properly}
+\item{ssh_user}{the name of ssh console user, should NOT be modified when using the default xai2shiny cloud_setup}
 }
 \description{
 This function deploys a selected \code{Shiny} application (\code{xai2shiny} application) to the created droplet.
