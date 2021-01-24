@@ -32,12 +32,11 @@ cloud_setup <- function(size = 1, ...){
 #' This function deploys a selected \code{Shiny} application (\code{xai2shiny} application) to the created droplet.
 #'
 #' @param droplet the droplet's id or droplet's object. The IP can be checked by running \code{analogsea::droplets()}.
-#' @param path path to the \code{Shiny} application (\code{xai2shiny} application).
+#' @param directory path to the directory containing \code{Shiny} application (\code{xai2shiny} application).
 #' @param packages vector of packages (package names) that are needed for the application to run.
 #' @param port port at which the application will run.
-#' @param dir where to deploy an app, urgent to run docklet properly
 #' @param browse a boolean, which indicates whether open the app on the web after deploying
-#' @param ssh_user the name of ssh console user, urgent to run docklet properly
+#' @param ssh_user the name of ssh console user, should NOT be modified when using the default xai2shiny cloud_setup
 #' @export
 #' @importFrom analogsea docklet_shinyapp
 #' @importFrom analogsea docklet_run
@@ -45,7 +44,7 @@ cloud_setup <- function(size = 1, ...){
 #' @importFrom analogsea droplet_upload
 #' @importFrom readr read_file
 #' @importFrom whisker whisker.render
-deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '', browse = TRUE, ssh_user = "root"){
+deploy_shiny <- function(droplet, directory, packages = "stats", port = 80, browse = TRUE, ssh_user = "root"){
 
   # Check if droplet exists
   if (missing(droplet) || is.null(droplet) || class(droplet) != "droplet" && class(droplet) != "numeric"){
@@ -70,8 +69,8 @@ deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '',
 
   # Filling Dockefile with whisker
   text_to_file <- whisker::whisker.render(dockerfile, packages_needed)
-  directory <- tempdir()
-  file_path <- paste0(directory, "/Dockerfile")
+  temp_directory <- tempdir()
+  file_path <- paste0(temp_directory, "/Dockerfile")
   file.create(file_path)
   file_conn <- file(file_path)
   writeLines(text_to_file, file_conn)
@@ -87,12 +86,12 @@ deploy_shiny <- function(droplet, path, packages = "stats", port = 80, dir = '',
 
   # Upload Shiny app files to droplet
   droplet_ssh(docklet, "mkdir -p /srv/shinyapps")
-  droplet_upload(docklet, path, "/srv/shinyapps/")
+  droplet_upload(docklet, directory, "/srv/shinyapps/")
 
   # Run the application
   docklet_run(docklet, " -d", " -p ", paste0(port, ":3838"),
               cn(" -v ", '/srv/shinyapps/:/srv/shiny-server/'),
-              cn(" -w", dir), " ", image_name, ssh_user = ssh_user)
+              cn(" -w", ''), " ", image_name, ssh_user = ssh_user)
 
   # Open the application in web browser
   url <- sprintf("http://%s:%s/", droplet_ip(docklet), port)

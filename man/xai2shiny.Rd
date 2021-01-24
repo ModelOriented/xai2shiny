@@ -16,7 +16,7 @@ xai2shiny(
 \arguments{
 \item{...}{one or more explainers created with \code{DALEX::explain()} function. They can be switched in top right corner of the application.}
 
-\item{directory}{path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.}
+\item{directory}{path to the directory the application files will be created in. If \code{NULL} the application will be created in a temporary directory.}
 
 \item{selected_variables}{choosen variables for application start-up. There can be more added in the application interface through an input.}
 
