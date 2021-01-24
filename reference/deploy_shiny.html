@@ -90,7 +90,7 @@
         <div class="info">
           <span class="partof">part of the <a href="https://github.com/ModelOriented/DrWhy">DrWhy.AI</a>
            developed by the <a href="https://mi2.mini.pw.edu.pl/">MI^2 DataLab</a> </span>
-          <span class="version version-default">1.0.0</span>
+          <span class="version version-default">1.1.0</span>
         </div>
       </div>
     </div>
@@ -142,10 +142,9 @@
 
     <pre class="usage"><span class='fu'>deploy_shiny</span><span class='op'>(</span>
   <span class='va'>droplet</span>,
-  <span class='va'>path</span>,
+  <span class='va'>directory</span>,
   packages <span class='op'>=</span> <span class='st'>"stats"</span>,
   port <span class='op'>=</span> <span class='fl'>80</span>,
-  dir <span class='op'>=</span> <span class='st'>""</span>,
   browse <span class='op'>=</span> <span class='cn'>TRUE</span>,
   ssh_user <span class='op'>=</span> <span class='st'>"root"</span>
 <span class='op'>)</span></pre>
@@ -158,8 +157,8 @@
       <td><p>the droplet's id or droplet's object. The IP can be checked by running <code><a href='https://analogsea.icu/reference/droplets.html'>analogsea::droplets()</a></code>.</p></td>
     </tr>
     <tr>
-      <th>path</th>
-      <td><p>path to the <code>Shiny</code> application (<code>xai2shiny</code> application).</p></td>
+      <th>directory</th>
+      <td><p>path to the directory containing <code>Shiny</code> application (<code>xai2shiny</code> application).</p></td>
     </tr>
     <tr>
       <th>packages</th>
@@ -170,16 +169,12 @@
       <td><p>port at which the application will run.</p></td>
     </tr>
     <tr>
-      <th>dir</th>
-      <td><p>where to deploy an app, urgent to run docklet properly</p></td>
-    </tr>
-    <tr>
       <th>browse</th>
       <td><p>a boolean, which indicates whether open the app on the web after deploying</p></td>
     </tr>
     <tr>
       <th>ssh_user</th>
-      <td><p>the name of ssh console user, urgent to run docklet properly</p></td>
+      <td><p>the name of ssh console user, should NOT be modified when using the default xai2shiny cloud_setup</p></td>
     </tr>
     </table>
 
