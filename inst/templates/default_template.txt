@@ -68,7 +68,7 @@ ui <- dashboardPage(
             # Checkboxes
             checkboxGroupButtons(
               inputId = "selected_features",
-              label = "Select explanation types:",
+              label = "Select dashboard features:",
               choices = c("Local explanations", "Global explanations", "Model performance", "Text description"),
               selected = c("Local explanations", "Model performance"),
               direction = "vertical",
@@ -247,7 +247,7 @@ ui <- dashboardPage(
 
             # XAI resources tab
             tabItem(tabName = "xai_resources",
-                    column(7, includeHTML(system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny")))
+                    column(7, includeHTML("learn_more_about_xai.html"))
             )
         )
     )

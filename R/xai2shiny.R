@@ -337,4 +337,5 @@ save_files <- function(directory, template_text_filled, verbose) {
   template_file_conn <- file(template_file_path)
   writeLines(template_text_filled, template_file_conn)
   close(template_file_conn)
+  file.copy(from = system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny"), to = paste0(directory, "/learn_more_about_xai.html"))
 }
