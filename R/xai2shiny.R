@@ -4,7 +4,7 @@
 #' The application contains model performance and explanations to fully explore the model.
 #'
 #' @param ... one or more explainers created with \code{DALEX::explain()} function. They can be switched in top right corner of the application.
-#' @param directory path to the folder the application files will be created in. If \code{NULL} the application will be created in a temporary directory.
+#' @param directory path to the directory the application files will be created in. If \code{NULL} the application will be created in a temporary directory.
 #' @param selected_variables choosen variables for application start-up. There can be more added in the application interface through an input.
 #' @param run whether to run the Shiny application instantly
 #' @param override how to respond to a directory overriding case
@@ -47,7 +47,7 @@
 #'\dontrun{
 #' xai2shiny(explainer_rf, explainer_glm)
 #' }
-xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, override = TRUE, verbose = TRUE) {
+xai2shiny <- function(..., directory = NULL, selected_variables = NULL, run = TRUE, override = FALSE, verbose = TRUE) {
 
   if(verbose == TRUE) {
     cat("Setting up new Shiny XAI application\n")
@@ -337,4 +337,5 @@ save_files <- function(directory, template_text_filled, verbose) {
   template_file_conn <- file(template_file_path)
   writeLines(template_text_filled, template_file_conn)
   close(template_file_conn)
+  file.copy(from = system.file("extdata", "learn_more_about_xai.html", package = "xai2shiny"), to = paste0(directory, "/learn_more_about_xai.html"))
 }
