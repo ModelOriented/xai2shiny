@@ -3,7 +3,9 @@ Type: Package
 Title: Creates Shiny Application From A DALEX Explainer
 Version: 1.1.0
 Authors@R: c(person("Rydelek", "Adam", email = "adam.rydelek@gmail.com", role = c("aut", "cre")),
-    person("Mateusz", "Polakowski", email = "mckraqs@gmail.com", role = "aut"))
+    person("Mateusz", "Polakowski", email = "mckraqs@gmail.com", role = "aut"),
+    person("Przemyslaw", "Biecek", role =  c("aut", "ths"),
+      comment = c(ORCID = "0000-0001-8423-1823")))
 Description: The package is used to create Shiny applications that contain all crucial information about models such as their performance and model explanations. The application is created based on one or many explainers which are adapters for models created by the DALEX package.
 License: GPL
 Encoding: UTF-8
